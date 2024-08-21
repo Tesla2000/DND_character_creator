@@ -1,12 +1,19 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Optional
 from typing import Type
 
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic import Field
+from pydantic import PositiveInt
 
+from .choices.class_creation.character_class import CharacterClass
+from .choices.health_creation.health_creation_method import (
+    HealthCreationMethod,
+)
+from .choices.stats_creation.stats_creation_method import StatsCreationMethod
 from .custom_argument_parser import CustomArgumentParser
 
 load_dotenv()
@@ -15,6 +22,16 @@ load_dotenv()
 class Config(BaseModel):
     _root: Path = Path(__file__).parent
     pos_args: list[str] = Field(default_factory=list)
+    level: PositiveInt = 1
+    class_: Optional[CharacterClass] = None
+    description: str = (
+        "Character obsessed with protecting forests for any cost"
+    )
+    stats_creation_method: StatsCreationMethod = (
+        StatsCreationMethod.STANDARD_ARRAY
+    )
+    health_creation_method: HealthCreationMethod = HealthCreationMethod.AVERAGE
+    backstory_prompt: str = "About 10 sentence long"
 
 
 def parse_arguments(config_class: Type[Config]):
