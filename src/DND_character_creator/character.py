@@ -12,7 +12,7 @@ from src.DND_character_creator.choices.background_creatrion.background import (
 from src.DND_character_creator.choices.class_creation.character_class import (
     CharacterClass,
 )
-from src.DND_character_creator.choices.race import Race
+from src.DND_character_creator.choices.main_race import MainRace
 from src.DND_character_creator.choices.stats_creation.statistic import (
     Statistic,
 )
@@ -32,7 +32,7 @@ def get_character_template(config: Config) -> Type[BaseModel]:
         forth_most_important_stat: Statistic
         fifth_most_important_stat: Statistic
         sixth_most_important_stat: Statistic
-        race: Race
+        race: MainRace
         name: str
         background: Background
         alignment: Alignment

@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 
 
-class Race(str, Enum):
+class MainRace(str, Enum):
     HUMAN = "Human"
     ELF = "Elf"
     DWARF = "Dwarf"
