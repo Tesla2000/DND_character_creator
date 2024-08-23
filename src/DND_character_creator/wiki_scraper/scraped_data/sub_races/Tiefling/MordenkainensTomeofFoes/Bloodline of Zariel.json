@@ -11,7 +11,7 @@
     "Intimidation"
   ],
   "tool_proficiencies": [],
-  "additional_feat": "Does sub-race get a feat 'Feat: You gain one Feat of your choice.'",
+  "additional_feat": false,
   "statistics": {
     "strength": 1,
     "dexterity": 0,

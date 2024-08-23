@@ -1,27 +1,29 @@
 {
-  "name": "Winged",
+  "name": "Verdan",
   "speed": 30,
-  "darkvision_range": 60,
+  "darkvision_range": 0,
   "languages": [
     "Common",
-    "Infernal"
+    "Goblin",
+    "Any of your choice"
   ],
   "skill_proficiencies": [
-    "Acrobatics",
-    "Athletics"
+    "Persuasion"
   ],
   "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
     "strength": 0,
     "dexterity": 0,
-    "constitution": 0,
+    "constitution": 1,
     "intelligence": 0,
     "wisdom": 0,
     "charisma": 2,
     "any_of_your_choice": 0
   },
   "other_active_abilities": [
-    "Flying speed of 30 feet without heavy armor"
+    "Black Blood Healing",
+    "Limited Telepathy",
+    "Telepathic Insight"
   ]
 }

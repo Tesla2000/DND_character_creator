@@ -49,7 +49,8 @@ def scraper_wiki_race(race: MainRace, output_dir: Path, llm):
 def _split_by_h1(page_struct: Tag) -> list[dict[str, str | list[str]]]:
     sections = page_struct.find_all("h1")
     split_content = []
-
+    if not sections:
+        return [{"title": "PlayersHandbook", "content": [str(page_struct)]}]
     for h1 in sections:
         # Create a dictionary to hold the current h1 and its following content
         section = {"title": h1.get_text(), "content": []}

@@ -1,29 +1,29 @@
 {
-  "name": "Fallen Aasimar",
-  "speed": 30,
-  "darkvision_range": 60,
+  "name": "Blue Grung",
+  "speed": 25,
+  "darkvision_range": 0,
   "languages": [
-    "Common",
-    "Celestial"
+    "Grung"
   ],
   "skill_proficiencies": [
-    "Deception",
-    "Religion"
+    "Perception"
   ],
   "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
     "strength": 0,
-    "dexterity": 0,
+    "dexterity": 2,
     "constitution": 1,
     "intelligence": 0,
     "wisdom": 0,
-    "charisma": 2,
+    "charisma": 0,
     "any_of_your_choice": 0
   },
   "other_active_abilities": [
-    "Healing Hands",
-    "Light Bearer",
-    "Celestial Revelation: Necrotic Shroud"
+    "Amphibious",
+    "Poison Immunity",
+    "Poisonous Skin",
+    "Standing Leap",
+    "Water Dependency"
   ]
 }
