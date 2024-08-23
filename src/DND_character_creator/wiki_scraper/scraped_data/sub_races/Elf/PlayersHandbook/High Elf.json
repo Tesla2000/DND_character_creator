@@ -1,0 +1,27 @@
+{
+  "name": "High Elf",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Elven"
+  ],
+  "skill_proficiencies": [
+    "Arcana"
+  ],
+  "additional_feat": true,
+  "statistics": {
+    "strength": 8,
+    "dexterity": 2,
+    "constitution": 0,
+    "intelligence": 1,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Cantrip",
+    "Elf Weapon Training",
+    "Extra Language"
+  ]
+}

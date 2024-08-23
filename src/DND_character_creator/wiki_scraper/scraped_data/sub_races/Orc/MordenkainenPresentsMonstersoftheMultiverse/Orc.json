@@ -1,0 +1,27 @@
+{
+  "name": "Orc",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Any of your choice"
+  ],
+  "skill_proficiencies": [],
+  "tool_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 2,
+    "dexterity": 0,
+    "constitution": 1,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Adrenaline Rush",
+    "Darkvision",
+    "Powerful Build",
+    "Relentless Endurance"
+  ]
+}

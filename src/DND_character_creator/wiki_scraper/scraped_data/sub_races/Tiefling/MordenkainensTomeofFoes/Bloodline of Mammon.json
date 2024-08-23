@@ -1,0 +1,27 @@
+{
+  "name": "Bloodline of Mammon",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Infernal"
+  ],
+  "skill_proficiencies": [
+    "Insight",
+    "Persuasion"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": "Does sub-race get a feat 'Feat: You gain one Feat of your choice.'",
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 0,
+    "intelligence": 1,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Legacy of Minauros: Mage Hand cantrip, Tenser's Floating Disk spell at 3rd level, Arcane Lock spell at 5th level."
+  ]
+}

@@ -29,6 +29,7 @@ class ToolProficiency(str, Enum):
     THIEVES_TOOLS = "Thieves' tools"
     LAND_VEHICLES = "Land vehicles"
     WATER_VEHICLES = "Water vehicles"
+    ANY_OF_YOUR_CHOICE = "Any of your choice"
 
 
 class GamingSet(str, Enum):
@@ -36,6 +37,7 @@ class GamingSet(str, Enum):
     DRAGONCHESS_SET = "Dragonchess set"
     PLAYING_CARD_SET = "Playing card set"
     THREE_DRAGON_ANTE_SET = "Three-Dragon Ante set"
+    ANY_OF_YOUR_CHOICE = "Any of your choice"
 
 
 class MusicalInstrument(str, Enum):
@@ -49,3 +51,4 @@ class MusicalInstrument(str, Enum):
     PAN_FLUTE = "Pan flute"
     SHAWM = "Shawm"
     VIOL = "Viol"
+    ANY_OF_YOUR_CHOICE = "Any of your choice"

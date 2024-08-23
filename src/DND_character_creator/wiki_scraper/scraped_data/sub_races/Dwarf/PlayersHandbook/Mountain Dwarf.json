@@ -1,0 +1,23 @@
+{
+  "name": "Mountain Dwarf",
+  "speed": 25,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Dwarvish"
+  ],
+  "skill_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 2,
+    "dexterity": 0,
+    "constitution": 2,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Dwarven Armor Training: You have proficiency with light and medium armor."
+  ]
+}

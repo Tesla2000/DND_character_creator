@@ -1,0 +1,26 @@
+{
+  "name": "Kobold",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Draconic"
+  ],
+  "skill_proficiencies": [],
+  "tool_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 10,
+    "dexterity": 14,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 10,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Grovel, Cower, and Beg",
+    "Pack Tactics",
+    "Sunlight Sensitivity"
+  ]
+}

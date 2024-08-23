@@ -1,0 +1,35 @@
+{
+  "name": "Lizardfolk",
+  "speed": 30,
+  "darkvision_range": 0,
+  "languages": [
+    "Common",
+    "Draconic"
+  ],
+  "skill_proficiencies": [
+    "Animal Handling",
+    "Nature",
+    "Perception",
+    "Stealth",
+    "Survival"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 2,
+    "intelligence": 0,
+    "wisdom": 1,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Bite",
+    "Cunning Artisan",
+    "Hold Breath",
+    "Hunter's Lore",
+    "Natural Armor",
+    "Hungry Jaws"
+  ]
+}

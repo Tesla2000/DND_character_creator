@@ -1,0 +1,31 @@
+{
+  "name": "Kobold",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Any of your choice"
+  ],
+  "skill_proficiencies": [
+    "Arcana",
+    "Investigation",
+    "Medicine",
+    "Sleight of Hand",
+    "Survival"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 1,
+    "dexterity": 2,
+    "constitution": 1,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Draconic Cry",
+    "Kobold Legacy"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Variant Human",
+  "speed": 30,
+  "darkvision_range": 0,
+  "languages": [
+    "Common",
+    "Any of your choice"
+  ],
+  "skill_proficiencies": [
+    "Any of your choice"
+  ],
+  "additional_feat": true,
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 0,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 2
+  },
+  "other_active_abilities": [
+    "You gain proficiency in one skill of your choice.",
+    "You gain one Feat of your choice."
+  ]
+}

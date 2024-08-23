@@ -1,0 +1,33 @@
+{
+  "name": "Orc",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Orc"
+  ],
+  "skill_proficiencies": [
+    "Animal Handling",
+    "Intimidation",
+    "Medicine",
+    "Nature",
+    "Perception",
+    "Survival"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 2,
+    "dexterity": 0,
+    "constitution": 1,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Aggressive",
+    "Primal Intuition",
+    "Powerful Build"
+  ]
+}

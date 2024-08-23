@@ -1,0 +1,27 @@
+{
+  "name": "Feral",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Infernal"
+  ],
+  "skill_proficiencies": [
+    "Deception",
+    "Stealth"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": "Does sub-race get a feat 'Feat: You gain one Feat of your choice.'",
+  "statistics": {
+    "strength": 8,
+    "dexterity": 2,
+    "constitution": 0,
+    "intelligence": 1,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Replace Ability Score Increase trait"
+  ]
+}

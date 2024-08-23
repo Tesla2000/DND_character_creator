@@ -1,0 +1,25 @@
+{
+  "name": "Beasthide",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common"
+  ],
+  "skill_proficiencies": [
+    "Athletics"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 1,
+    "dexterity": 0,
+    "constitution": 2,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Whenever you shift, you gain 1d6 additional temporary hit points, and while shifted, you have a +1 bonus to your Armor Class."
+  ]
+}

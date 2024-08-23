@@ -1,0 +1,26 @@
+{
+  "name": "Longtooth",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Any of your choice"
+  ],
+  "skill_proficiencies": [
+    "Athletics"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": "Does sub-race get a feat 'Feat: You gain one Feat of your choice.'",
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 0,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 2
+  },
+  "other_active_abilities": [
+    "When you shift and as a bonus action on your other turns while shifted, you can use your elongated fangs to make an unarmed strike. If you hit with your fangs, you can deal piercing damage equal to 1d6 + your Strength modifier."
+  ]
+}

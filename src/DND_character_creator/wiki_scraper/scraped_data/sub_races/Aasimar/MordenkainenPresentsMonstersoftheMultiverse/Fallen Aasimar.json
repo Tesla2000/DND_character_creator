@@ -1,0 +1,29 @@
+{
+  "name": "Fallen Aasimar",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Celestial"
+  ],
+  "skill_proficiencies": [
+    "Deception",
+    "Religion"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": "Does sub-race get a feat 'Feat: You gain one Feat of your choice.'",
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 1,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 2,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Healing Hands",
+    "Light Bearer",
+    "Celestial Revelation: Necrotic Shroud"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Wood Elf",
+  "speed": 35,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Elven"
+  ],
+  "skill_proficiencies": [
+    "Perception"
+  ],
+  "additional_feat": true,
+  "statistics": {
+    "strength": 8,
+    "dexterity": 2,
+    "constitution": 0,
+    "intelligence": 0,
+    "wisdom": 1,
+    "charisma": 0,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Elf Weapon Training",
+    "Fleet of Foot",
+    "Mask of the Wild"
+  ]
+}

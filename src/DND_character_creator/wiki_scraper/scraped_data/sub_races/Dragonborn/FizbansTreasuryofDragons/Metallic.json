@@ -1,0 +1,29 @@
+{
+  "name": "Metallic",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Any of your choice"
+  ],
+  "skill_proficiencies": [
+    "Any of your choice"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": "Does sub-race get a feat 'Feat: You gain one Feat of your choice.'",
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 0,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 3
+  },
+  "other_active_abilities": [
+    "Metallic Ancestry",
+    "Breath Weapon",
+    "Draconic Resistance",
+    "Metallic Breath Weapon"
+  ]
+}

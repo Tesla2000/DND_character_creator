@@ -1,0 +1,27 @@
+{
+  "name": "Hellfire",
+  "speed": 30,
+  "darkvision_range": 60,
+  "languages": [
+    "Common",
+    "Infernal"
+  ],
+  "skill_proficiencies": [
+    "Arcana",
+    "Intimidation"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": "Does sub-race get a feat 'Feat: You gain one Feat of your choice.'",
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 0,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 2,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Burning Hands spell (2nd-level once)"
+  ]
+}

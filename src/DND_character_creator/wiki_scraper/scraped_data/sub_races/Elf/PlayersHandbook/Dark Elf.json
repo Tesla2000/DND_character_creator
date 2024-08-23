@@ -1,0 +1,28 @@
+{
+  "name": "Dark Elf",
+  "speed": 30,
+  "darkvision_range": 120,
+  "languages": [
+    "Common",
+    "Elven"
+  ],
+  "skill_proficiencies": [
+    "Stealth"
+  ],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 8,
+    "dexterity": 2,
+    "constitution": 1,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 1,
+    "any_of_your_choice": 0
+  },
+  "other_active_abilities": [
+    "Superior Darkvision",
+    "Sunlight Sensitivity",
+    "Drow Magic",
+    "Drow Weapon Training"
+  ]
+}

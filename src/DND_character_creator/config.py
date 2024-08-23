@@ -32,6 +32,7 @@ class Config(BaseModel):
     )
     health_creation_method: HealthCreationMethod = HealthCreationMethod.AVERAGE
     backstory_prompt: str = "About 10 sentence long"
+    looks_prompt: str = "Describe general looks of a character"
 
 
 def parse_arguments(config_class: Type[Config]):

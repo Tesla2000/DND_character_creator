@@ -1,0 +1,32 @@
+{
+  "name": "Centaurs",
+  "speed": 40,
+  "darkvision_range": 0,
+  "languages": [
+    "Common",
+    "Any of your choice"
+  ],
+  "skill_proficiencies": [
+    "Animal Handling",
+    "Medicine",
+    "Nature",
+    "Survival"
+  ],
+  "tool_proficiencies": [],
+  "additional_feat": false,
+  "statistics": {
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 0,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 3
+  },
+  "other_active_abilities": [
+    "Charge",
+    "Equine Build",
+    "Hooves",
+    "Natural Affinity"
+  ]
+}

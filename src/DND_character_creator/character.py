@@ -13,6 +13,7 @@ from src.DND_character_creator.choices.class_creation.character_class import (
     CharacterClass,
 )
 from src.DND_character_creator.choices.main_race import MainRace
+from src.DND_character_creator.choices.sex import Sex
 from src.DND_character_creator.choices.stats_creation.statistic import (
     Statistic,
 )
@@ -23,6 +24,7 @@ def get_character_template(config: Config) -> Type[BaseModel]:
     class Character(BaseModel):
         """D&D e5 character"""
 
+        sex: Sex
         class_: CharacterClass
         backstory: str = Field(description=config.backstory_prompt)
         age: int
@@ -36,5 +38,6 @@ def get_character_template(config: Config) -> Type[BaseModel]:
         name: str
         background: Background
         alignment: Alignment
+        looks: str = Field(description=config.looks_prompt)
 
     return Character
