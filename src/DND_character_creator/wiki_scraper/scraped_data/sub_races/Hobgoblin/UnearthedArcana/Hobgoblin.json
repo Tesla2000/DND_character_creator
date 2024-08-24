@@ -11,7 +11,7 @@
     "Intimidation"
   ],
   "tool_proficiencies": [],
-  "additional_feat": true,
+  "additional_feat": false,
   "statistics": {
     "strength": 2,
     "dexterity": 1,

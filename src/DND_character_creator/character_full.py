@@ -14,7 +14,7 @@ from src.DND_character_creator.choices.class_creation.character_class import (
 from src.DND_character_creator.choices.class_creation.character_class import (
     subclasses,
 )  # noqa: E501
-from src.DND_character_creator.choices.race_creation.subraces import (
+from src.DND_character_creator.choices.race_creation.sub_races import (
     get_sub_races,
 )
 from src.DND_character_creator.choices.spell_slots.spell_slots import Cantrip
@@ -48,6 +48,18 @@ class CharacterFull(CharacterBase):
     feats: list[Feat]
     sub_race: str
     sub_class: str
+
+    def get_without_stats(self):
+        return self.model_dump(
+            exclude={
+                "first_most_important_stat",
+                "second_most_important_stat",
+                "third_most_important_stat",
+                "fourth_most_important_stat",
+                "fifth_most_important_stat",
+                "sixth_most_important_stat",
+            }
+        )
 
 
 level_names = [
@@ -115,8 +127,15 @@ def get_full_character_template(
             ],
             Field(description="Not more than 2"),
         ),
-        feats=(list[Feat], ...),
-        sub_race=(get_sub_races(character_base.race, config), ...),
+        feats=(
+            list[Feat],
+            Field(
+                description="I urge you to consider Ability score "
+                "improvement as they are pretty common however "
+                "if other feats fit better go for it."
+            ),
+        ),
+        sub_race=(get_sub_races(character_base.main_race, config), ...),
         sub_class=(subclasses[character_base.main_class], ...),
     )
     pre_set_values = {}

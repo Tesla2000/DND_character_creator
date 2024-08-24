@@ -34,7 +34,7 @@ class CharacterBase(BaseModel):
     forth_most_important_stat: Statistic
     fifth_most_important_stat: Statistic
     sixth_most_important_stat: Statistic
-    race: MainRace
+    main_race: MainRace
     name: str
     background: Background
     alignment: Alignment
@@ -44,6 +44,10 @@ class CharacterBase(BaseModel):
     skin_color: str
     hairstyle: str
     appearance: str
+    character_traits: str
+    ideals: str
+    bounds: str
+    weaknesses: str
 
 
 def get_base_character_template(
@@ -61,7 +65,7 @@ def get_base_character_template(
         forth_most_important_stat=(Statistic, ...),
         fifth_most_important_stat=(Statistic, ...),
         sixth_most_important_stat=(Statistic, ...),
-        race=(MainRace, ...),
+        main_race=(MainRace, ...),
         name=(str, ...),
         background=(Background, ...),
         alignment=(Alignment, ...),
@@ -71,6 +75,10 @@ def get_base_character_template(
         skin_color=(str, ...),
         hairstyle=(str, ...),
         appearance=(str, Field(description=config.appearance_prompt)),
+        character_traits=(str, ...),
+        ideals=(str, ...),
+        bounds=(str, ...),
+        weaknesses=(str, ...),
     )
     pre_set_values = {}
     for key in tuple(fields_dictionary.keys()):

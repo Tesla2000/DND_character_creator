@@ -10,7 +10,7 @@
     "Stealth",
     "Performance"
   ],
-  "additional_feat": true,
+  "additional_feat": false,
   "statistics": {
     "strength": 0,
     "dexterity": 0,

@@ -19,7 +19,7 @@ from .choices.health_creation.health_creation_method import (
 )
 from .choices.race_creation.main_race import MainRace
 from .choices.race_creation.sub_race_sources import SubRaceSources
-from .choices.race_creation.subraces import get_sub_races
+from .choices.race_creation.sub_races import get_sub_races
 from .choices.sex import Sex
 from .choices.spell_slots.spell_slots import Cantrip
 from .choices.spell_slots.spell_slots import FirstLevel
@@ -64,7 +64,7 @@ class Config(BaseModel):
     forth_most_important_stat: Optional[Statistic] = None
     fifth_most_important_stat: Optional[Statistic] = None
     sixth_most_important_stat: Optional[Statistic] = None
-    race: Optional[MainRace] = None
+    main_race: Optional[MainRace] = None
     name: Optional[str] = None
     background: Optional[Background] = None
     alignment: Optional[Alignment] = None
@@ -85,6 +85,10 @@ class Config(BaseModel):
     feats: Optional[list[Feat]] = None
     sub_race: Optional[str] = None
     sub_class: Optional[str] = None
+    character_traits: Optional[str] = None
+    ideals: Optional[str] = None
+    bounds: Optional[str] = None
+    weaknesses: Optional[str] = None
 
     def __init__(self, /, **data: Any):
         super().__init__(**data)

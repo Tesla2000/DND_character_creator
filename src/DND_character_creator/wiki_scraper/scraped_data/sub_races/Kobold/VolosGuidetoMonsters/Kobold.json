@@ -10,13 +10,13 @@
   "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
-    "strength": 10,
-    "dexterity": 14,
-    "constitution": 10,
-    "intelligence": 10,
-    "wisdom": 10,
-    "charisma": 10,
-    "any_of_your_choice": 0
+    "strength": 0,
+    "dexterity": 0,
+    "constitution": 0,
+    "intelligence": 0,
+    "wisdom": 0,
+    "charisma": 0,
+    "any_of_your_choice": 3
   },
   "other_active_abilities": [
     "Grovel, Cower, and Beg",
