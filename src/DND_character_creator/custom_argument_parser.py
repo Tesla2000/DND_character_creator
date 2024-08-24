@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from types import GenericAlias
+from types import NoneType
 from typing import Any
 
 
@@ -9,10 +10,30 @@ class CustomArgumentParser(argparse.ArgumentParser):
     def add_argument(
         self,
         *args,
+        value=None,
         **kwargs,
     ):
         if isinstance(kwargs.get("type"), GenericAlias):
             kwargs["type"] = kwargs.get("type").__origin__
+        if issubclass(
+            getattr(kwargs.get("type"), "__args__", [type])[-1], NoneType
+        ):
+            if kwargs.get("type").__args__ == 2:
+                kwargs["type"] = kwargs["type"].__args__[0]
+        if issubclass(
+            getattr(kwargs.get("type"), "__args__", [type])[-1], NoneType
+        ):
+            if len(kwargs.get("type").__args__) == 2:
+                kwargs["type"] = kwargs["type"].__args__[0]
+        elif value and issubclass(
+            getattr(value.annotation, "__args__", [type])[-1], NoneType
+        ):
+            if len(value.annotation.__args__) == 2:
+                kwargs["type"] = value.annotation.__args__[0]
+        if "type" in kwargs:
+            kwargs["type"] = getattr(
+                kwargs.get("type"), "__origin__", kwargs.get("type")
+            )
         if isinstance(kwargs.get("type"), type):
             if issubclass(kwargs.get("type"), bool):
                 kwargs["type"] = self._str2bool

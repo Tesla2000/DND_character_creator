@@ -160,7 +160,7 @@ class WizardSubclass(str, Enum):
     WAR_MAGIC = "School of War Magic"
 
 
-class CharacterClass(str, Enum):
+class MainClass(str, Enum):
     BARBARIAN = "Barbarian"
     BARD = "Bard"
     CLERIC = "Cleric"
@@ -177,17 +177,17 @@ class CharacterClass(str, Enum):
 
 
 subclasses = {
-    CharacterClass.ARTIFICER: ArtificerSubclass,
-    CharacterClass.BARD: BardSubclass,
-    CharacterClass.BARBARIAN: BarbarianSubclass,
-    CharacterClass.CLERIC: ClericSubclass,
-    CharacterClass.DRUID: DruidSubclass,
-    CharacterClass.FIGHTER: FighterSubclass,
-    CharacterClass.MONK: MonkSubclass,
-    CharacterClass.PALADIN: PaladinSubclass,
-    CharacterClass.RANGER: RangerSubclass,
-    CharacterClass.ROGUE: RogueSubclass,
-    CharacterClass.SORCERER: SorcererSubclass,
-    CharacterClass.WARLOCK: WarlockSubclass,
-    CharacterClass.WIZARD: WizardSubclass,
+    MainClass.ARTIFICER: ArtificerSubclass,
+    MainClass.BARD: BardSubclass,
+    MainClass.BARBARIAN: BarbarianSubclass,
+    MainClass.CLERIC: ClericSubclass,
+    MainClass.DRUID: DruidSubclass,
+    MainClass.FIGHTER: FighterSubclass,
+    MainClass.MONK: MonkSubclass,
+    MainClass.PALADIN: PaladinSubclass,
+    MainClass.RANGER: RangerSubclass,
+    MainClass.ROGUE: RogueSubclass,
+    MainClass.SORCERER: SorcererSubclass,
+    MainClass.WARLOCK: WarlockSubclass,
+    MainClass.WIZARD: WizardSubclass,
 }
