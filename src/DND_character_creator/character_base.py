@@ -14,7 +14,7 @@ from src.DND_character_creator.choices.background_creatrion.background import (
 from src.DND_character_creator.choices.class_creation.character_class import (
     MainClass,
 )
-from src.DND_character_creator.choices.main_race import MainRace
+from src.DND_character_creator.choices.race_creation.main_race import MainRace
 from src.DND_character_creator.choices.sex import Sex
 from src.DND_character_creator.choices.stats_creation.statistic import (
     Statistic,
@@ -27,7 +27,7 @@ class CharacterBase(BaseModel):
     backstory: str
     level: int
     age: int
-    class_: MainClass
+    main_class: MainClass
     first_most_important_stat: Statistic
     second_most_important_stat: Statistic
     third_most_important_stat: Statistic
@@ -46,12 +46,12 @@ class CharacterBase(BaseModel):
     appearance: str
 
 
-def get_character_base_template(
+def get_base_character_template(
     config: Config,
 ) -> tuple[Type[BaseModel], dict[str, Any]]:
     fields_dictionary = dict(
         sex=(Sex, ...),
-        class_=(MainClass, ...),
+        main_class=(MainClass, ...),
         backstory=(str, Field(description=config.backstory_prompt)),
         level=(int, ...),
         age=(int, ...),
@@ -66,7 +66,7 @@ def get_character_base_template(
         background=(Background, ...),
         alignment=(Alignment, ...),
         height=(int, Field(description=config.height_prompt)),
-        weight=(str, Field(description=config.weight_prompt)),
+        weight=(int, Field(description=config.weight_prompt)),
         eye_color=(str, ...),
         skin_color=(str, ...),
         hairstyle=(str, ...),

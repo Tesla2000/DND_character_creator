@@ -29,7 +29,7 @@ class CharacterWrapper:
     def health(self) -> int:
         if self._health:
             return self._health
-        hit_die = class2hit_die[self.character_base.class_]
+        hit_die = class2hit_die[self.character_base.main_class]
         if self.config.health_creation_method == HealthCreationMethod.AVERAGE:
             average = hit_die // 2 + 1
             self._health = hit_die + (self.character_base.level - 1) * average

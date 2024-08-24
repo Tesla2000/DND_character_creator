@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 from typing import Optional
 from typing import Type
 
@@ -12,25 +13,39 @@ from pydantic import PositiveInt
 from .choices.alignment import Alignment
 from .choices.background_creatrion.background import Background
 from .choices.class_creation.character_class import MainClass
+from .choices.class_creation.character_class import subclasses
 from .choices.health_creation.health_creation_method import (
     HealthCreationMethod,
 )
-from .choices.main_race import MainRace
+from .choices.race_creation.main_race import MainRace
+from .choices.race_creation.sub_race_sources import SubRaceSources
+from .choices.race_creation.subraces import get_sub_races
 from .choices.sex import Sex
+from .choices.spell_slots.spell_slots import Cantrip
+from .choices.spell_slots.spell_slots import FirstLevel
+from .choices.spell_slots.spell_slots import SecondLevel
+from .choices.spell_slots.spell_slots import ThirdLevel
 from .choices.stats_creation.statistic import Statistic
 from .choices.stats_creation.stats_creation_method import StatsCreationMethod
 from .custom_argument_parser import CustomArgumentParser
+from .feats import Feat
 
 load_dotenv()
 
 
 class Config(BaseModel):
     _root: Path = Path(__file__).parent
+    _sub_races_root: Path = _root / "wiki_scraper/scraped_data/sub_races"
+    _spells_root: Path = _root / "wiki_scraper/scraped_data/spells"
     pos_args: list[str] = Field(default_factory=list)
     level: Optional[PositiveInt] = None
-    class_: Optional[MainClass] = None
-    description: str = (
-        "Create a character obsessed with protecting forests for any cost."
+    main_class: Optional[MainClass] = None
+    base_description: str = (
+        "Create a D&D e5 PC obsessed with protecting forests for any cost."
+    )
+    full_description: str = (
+        "Fill up details of a D&D e5 character obsessed with protecting "
+        "forests for any cost."
     )
     stats_creation_method: StatsCreationMethod = (
         StatsCreationMethod.STANDARD_ARRAY
@@ -59,6 +74,36 @@ class Config(BaseModel):
     skin_color: Optional[str] = None
     hairstyle: Optional[str] = None
     appearance: Optional[str] = None
+    subclass_sources: list[SubRaceSources] = Field(
+        default_factory=lambda: list(SubRaceSources)
+    )
+    llm: str = "gpt-4o-mini"
+    cantrips: Optional[list[Cantrip]] = None
+    first_level_spells: Optional[list[FirstLevel]] = None
+    second_level_spells: Optional[list[SecondLevel]] = None
+    third_level_spells: Optional[list[ThirdLevel]] = None
+    feats: Optional[list[Feat]] = None
+    sub_race: Optional[str] = None
+    sub_class: Optional[str] = None
+
+    def __init__(self, /, **data: Any):
+        super().__init__(**data)
+        if self.sub_race:
+            assert (
+                self.race
+            ), "If sub-race is provided the race must be provided first"
+            assert self.sub_race in get_sub_races(self.race, self), (
+                f"Sub-race must be in sub-races "
+                f"{get_sub_races(self.race, self)}"
+            )
+        if self.sub_class:
+            assert (
+                self.main_class
+            ), "If sub-class is provided the class must be provided first"
+            assert self.sub_class in subclasses[self.main_class], (
+                f"Sub-class must be in sub-classes "
+                f"{subclasses[self.main_class]}"
+            )
 
 
 def parse_arguments(config_class: Type[Config]):

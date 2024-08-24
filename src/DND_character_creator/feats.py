@@ -74,3 +74,4 @@ class Feat(str, Enum):
     VIGOR_OF_THE_HILL_GIANT = "Vigor of the Hill Giant"
     WAR_CASTER = "War Caster"
     WEAPON_MASTER = "Weapon Master"
+    ABILITY_SCORE_IMPROVEMENT = "Ability Score Improvement"

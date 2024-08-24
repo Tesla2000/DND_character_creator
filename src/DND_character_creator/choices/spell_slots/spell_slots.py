@@ -1,6 +1,15 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Type
+from typing import TYPE_CHECKING
+
+from src.DND_character_creator.choices.class_creation.character_class import (
+    MainClass,
+)
+
+if TYPE_CHECKING:
+    from src.DND_character_creator.config import Config
 
 
 class Spell(str, Enum):
@@ -36,7 +45,7 @@ class Cantrip(Spell):
     MIND_SLIVER = "Mind Sliver"
     MINOR_ILLUSION = "Minor Illusion"
     MOLD_EARTH = "Mold Earth"
-    ON_OFF = "On/Off"
+    ON_OFF = "On-Off"
     POISON_SPRAY = "Poison Spray"
     PRESTIDIGITATION = "Prestidigitation"
     PRIMAL_SAVAGERY = "Primal Savagery"
@@ -60,7 +69,7 @@ class Cantrip(Spell):
     WORD_OF_RADIANCE = "Word of Radiance"
 
 
-class FirstLevel(Enum):
+class FirstLevel(Spell):
     ABSORB_ELEMENTS = "Absorb Elements"
     ACID_STREAM = "Acid Stream (UA)"
     ALARM = "Alarm"
@@ -154,7 +163,7 @@ class FirstLevel(Enum):
     ZEPHYR_STRIKE = "Zephyr Strike"
 
 
-class SecondLevel(Enum):
+class SecondLevel(Spell):
     AGANAZZARS_SCORCHER = "Aganazzar's Scorcher"
     AID = "Aid"
     AIR_BUBBLE = "Air Bubble"
@@ -165,7 +174,7 @@ class SecondLevel(Enum):
     AUGURY = "Augury"
     BARKSKIN = "Barkskin"
     BEAST_SENSE = "Beast Sense"
-    BLINDNESS_DEAFNESS = "Blindness/Deafness"
+    BLINDNESS_DEAFNESS = "Blindness-Deafness"
     BLUR = "Blur"
     BORROWED_KNOWLEDGE = "Borrowed Knowledge"
     BRANDING_SMITE = "Branding Smite"
@@ -182,7 +191,7 @@ class SecondLevel(Enum):
     DUST_DEVIL = "Dust Devil"
     EARTHBIND = "Earthbind"
     ENHANCE_ABILITY = "Enhance Ability"
-    ENLARGE_REDUCE = "Enlarge/Reduce"
+    ENLARGE_REDUCE = "Enlarge-Reduce"
     ENTHRALL = "Enthrall"
     FIND_STEED = "Find Steed"
     FIND_TRAPS = "Find Traps"
@@ -197,7 +206,6 @@ class SecondLevel(Enum):
     HEALING_SPIRIT = "Healing Spirit"
     HEAT_METAL = "Heat Metal"
     HOLD_PERSON = "Hold Person"
-    ICINGDEATHS_FROST_UA = "Icingdeath's Frost (UA)"
     IMMOVABLE_OBJECT = "Immovable Object"
     INVISIBILITY = "Invisibility"
     JIMS_GLOWING_COIN = "Jim's Glowing Coin"
@@ -254,7 +262,7 @@ class SecondLevel(Enum):
     ZONE_OF_TRUTH = "Zone of Truth"
 
 
-class ThirdLevel(Enum):
+class ThirdLevel(Spell):
     ANIMATE_DEAD = "Animate Dead"
     ANTAGONIZE = "Antagonize"
     ANTAGONIZE_UA = "Antagonize (UA)"
@@ -285,13 +293,11 @@ class ThirdLevel(Enum):
     FLAME_ARROWS = "Flame Arrows"
     FLAME_STRIDE_UA = "Flame Stride (UA)"
     FLY = "Fly"
-    FREEDOM_OF_THE_WAVES_HB = "Freedom of the Waves (HB)"
     GALDERS_TOWER = "Galder's Tower"
     GASEOUS_FORM = "Gaseous Form"
     GLYPH_OF_WARDING = "Glyph of Warding"
     HASTE = "Haste"
     HAYWIRE_UA = "Haywire (UA)"
-    HOUSE_OF_CARDS_UA = "House of Cards (UA)"
     HUNGER_OF_HADAR = "Hunger Of Hadar"
     HYPNOTIC_PATTERN = "Hypnotic Pattern"
     INCITE_GREED = "Incite Greed"
@@ -313,7 +319,6 @@ class ThirdLevel(Enum):
     PROTECTION_FROM_BALLISTICS_UA = "Protection from Ballistics (UA)"
     PROTECTION_FROM_ENERGY = "Protection from Energy"
     PSIONIC_BLAST_UA = "Psionic Blast (UA)"
-    PULSE_WAVE_D = "Pulse Wave (D)"
     REMOVE_CURSE = "Remove Curse"
     REVIVIFY = "Revivify"
     SENDING = "Sending"
@@ -339,3 +344,20 @@ class ThirdLevel(Enum):
     WATER_BREATHING = "Water Breathing"
     WATER_WALK = "Water Walk"
     WIND_WALL = "Wind Wall"
+
+
+def filter_accessible(
+    spell_type: Type[Spell], main_class: MainClass, config: Config
+) -> Type[Enum]:
+    return Spell(
+        f"{main_class.value}{spell_type.__name__}",
+        dict(
+            (spell, spell.value)
+            for spell in spell_type
+            if main_class.value
+            in config._spells_root.joinpath(spell_type.__name__.lower())
+            .joinpath(spell.value)
+            .read_text()
+            .split(",")
+        ),
+    )
