@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel
 from pydantic import Field
 
 from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
 
 
-class Ability(BaseModel):
+class AbilityTemplate(BaseModel):
     name: str
-    ability_type: AbilityType
+    ability_type: AbilityType = Field(
+        description="Free action if not provided."
+    )
     combat_related: bool = Field(
         description="Does this ability posses utility in combat. Mostly yes, "
         "the exceptions are improvements to skills parameters, "
@@ -21,6 +25,11 @@ class Ability(BaseModel):
     description: str
     required_level: int
 
+    def __init__(self, /, **data: Any):
+        if data["ability_type"] not in AbilityType:
+            data["ability_type"] = "passive"
+        super().__init__(**data)
 
-class Abilities(BaseModel):
-    abilities: list[Ability]
+
+class AbilitiesTemplate(BaseModel):
+    abilities: list[AbilityTemplate]

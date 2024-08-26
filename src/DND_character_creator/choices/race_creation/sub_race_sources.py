@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 
 
-class SubRaceSources(str, Enum):
+class DNDResource(str, Enum):
     SPELLJAMMER_ADVENTURES_IN_SPACE = "SpelljammerAdventuresinSpace"
     MYTHIC_ODYSSEYS_OF_THEROS = "MythicOdysseysofTheros"
     ELEMENTAL_EVIL_PLAYERS_COMPANION = "ElementalEvilPlayersCompanion"
@@ -28,3 +28,5 @@ class SubRaceSources(str, Enum):
     FIZBANS_TREASURY_OF_DRAGONS = "FizbansTreasuryofDragons"
     PLAYERS_HANDBOOK = "PlayersHandbook"
     PLANE_SHIFT_ZENDIKAR = "PlaneShiftZendikar"
+    TASHAS_CAULDRON_OF_EVERYTHING = "Tasha's Cauldron of Everything"
+    THE_BOOK_OF_MANY_THINGS = "The Book of Many Things"

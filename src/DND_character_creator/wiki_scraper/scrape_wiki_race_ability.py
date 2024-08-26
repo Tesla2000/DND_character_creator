@@ -8,7 +8,9 @@ from bs4 import BeautifulSoup
 from langchain_openai import ChatOpenAI
 
 from src.DND_character_creator.choices.race_creation.main_race import MainRace
-from src.DND_character_creator.wiki_scraper.AbilityTemplate import Abilities
+from src.DND_character_creator.wiki_scraper.AbilityTemplate import (
+    AbilitiesTemplate,
+)
 
 url = "https://dnd5e.wikidot.com/lineage:{}"
 
@@ -39,7 +41,9 @@ def scraper_wiki_race(race: MainRace, output_dir: Path, llm):
 
 
 if __name__ == "__main__":
-    llm = ChatOpenAI(model="gpt-4o-mini").with_structured_output(Abilities)
+    llm = ChatOpenAI(model="gpt-4o-mini").with_structured_output(
+        AbilitiesTemplate
+    )
     for race in MainRace:
         scraper_wiki_race(
             race,

@@ -7,17 +7,21 @@ import requests
 from bs4 import BeautifulSoup
 from langchain_openai import ChatOpenAI
 
-from src.DND_character_creator.feats import Feat
-from src.DND_character_creator.wiki_scraper.FeatTemplate import FeatTemplate
+from src.DND_character_creator.choices.class_creation.character_class import (
+    MainClass,
+)
+from src.DND_character_creator.wiki_scraper.AbilityTemplate import (
+    AbilitiesTemplate,
+)
 
-url = "https://dnd5e.wikidot.com/feat:{}"
+url = "https://dnd5e.wikidot.com/{}"
 
 
-def scraper_wiki_feats(feat: Feat, output_dir: Path, llm):
-    feat_path = output_dir.joinpath(f"{feat.value}.json")
+def scraper_wiki_class(main_class: MainClass, output_dir: Path, llm):
+    feat_path = output_dir.joinpath(f"{main_class.value}.json")
     if feat_path.exists():
         return
-    response = requests.get(url.format(feat.value.lower()))
+    response = requests.get(url.format(main_class.value.lower()))
     if response.status_code != 200:
         raise ValueError("Wrong status code")
 
@@ -34,10 +38,8 @@ def scraper_wiki_feats(feat: Feat, output_dir: Path, llm):
 
 
 if __name__ == "__main__":
-    llm = ChatOpenAI(model="gpt-4o-mini").with_structured_output(FeatTemplate)
-    for feat in Feat:
-        scraper_wiki_feats(
-            feat,
-            Path("scraped_data/feats"),
-            llm=llm,
-        )
+    llm = ChatOpenAI(model="gpt-4o-mini").with_structured_output(
+        AbilitiesTemplate
+    )
+    for main_class in MainClass:
+        scraper_wiki_class(main_class, Path("scraped_data/feats"), llm=llm)

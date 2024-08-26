@@ -18,7 +18,7 @@ from .choices.health_creation.health_creation_method import (
     HealthCreationMethod,
 )
 from .choices.race_creation.main_race import MainRace
-from .choices.race_creation.sub_race_sources import SubRaceSources
+from .choices.race_creation.sub_race_sources import DNDResource
 from .choices.race_creation.sub_races import get_sub_races
 from .choices.sex import Sex
 from .choices.spell_slots.spell_slots import Cantrip
@@ -74,8 +74,8 @@ class Config(BaseModel):
     skin_color: Optional[str] = None
     hairstyle: Optional[str] = None
     appearance: Optional[str] = None
-    subclass_sources: list[SubRaceSources] = Field(
-        default_factory=lambda: list(SubRaceSources)
+    subclass_sources: list[DNDResource] = Field(
+        default_factory=lambda: list(DNDResource)
     )
     llm: str = "gpt-4o-mini"
     cantrips: Optional[list[Cantrip]] = None
