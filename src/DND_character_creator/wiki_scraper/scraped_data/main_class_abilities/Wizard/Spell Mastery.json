@@ -1,0 +1,8 @@
+{
+  "name": "Spell Mastery",
+  "ability_type": "action",
+  "combat_related": true,
+  "spell_grant": true,
+  "description": "At 18th level, you have achieved such mastery over certain spells that you can cast them at will.",
+  "required_level": 18
+}

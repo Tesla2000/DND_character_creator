@@ -28,7 +28,10 @@ class AbilityTemplate(BaseModel):
     def __init__(self, /, **data: Any):
         if data["ability_type"] not in AbilityType:
             data["ability_type"] = "passive"
-        super().__init__(**data)
+        try:
+            super().__init__(**data)
+        except Exception as e:
+            raise e
 
 
 class AbilitiesTemplate(BaseModel):
