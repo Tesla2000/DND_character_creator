@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from itertools import chain
 from itertools import islice
 from itertools import repeat
@@ -26,6 +27,9 @@ from src.DND_character_creator.choices.stats_creation.stats_creation_method impo
 )
 from src.DND_character_creator.config import Config
 from src.DND_character_creator.feats import Feat
+from src.DND_character_creator.wiki_scraper.AbilityTemplate import (
+    AbilityTemplate,
+)
 
 
 class CharacterWrapper:
@@ -79,7 +83,7 @@ class CharacterWrapper:
             assert (
                 len(self._attributes) == 6
             ), "Some attribute value are duplicated. Ask author for help"
-        race_attributes = self._race_stats["statistics"]
+        race_attributes = self._race_stats.statistics
         for attribute_name in self._attributes:
             self._attributes[attribute_name] += race_attributes[attribute_name]
         if race_attributes["any_of_your_choice"] == 3:
@@ -106,7 +110,7 @@ class CharacterWrapper:
         ):
             if level_required > self.character.level:
                 break
-        improvements += self._race_stats["additional_feat"]
+        improvements += self._race_stats.additional_feat
         self._feats = list(
             islice(
                 chain.from_iterable(
@@ -119,6 +123,39 @@ class CharacterWrapper:
             )
         )
         return self._feats
+
+    @property
+    def combat_abilities(self) -> list[str]:
+        abilities = []
+        for feat in self.feats:
+            ability = AbilityTemplate(
+                **json.loads(
+                    self.config._feats_root.joinpath(
+                        f"{feat.value}.json"
+                    ).read_text()
+                )
+            )
+            if (
+                ability.combat_related
+                and ability.required_level >= self.character.level
+            ):
+                abilities.append(ability.description)
+        for ability_name in self._race_stats.other_active_abilities:
+            ability_name = ability_name.split(":")[0]
+            ability = AbilityTemplate(
+                **json.loads(
+                    self.config._race_abilities_root.joinpath(
+                        self.character.main_race.value
+                    )
+                    .joinpath(f"{ability_name}.json")
+                    .read_text()
+                )
+            )
+            if (
+                ability.combat_related
+                and ability.required_level >= self.character.level
+            ):
+                abilities.append(ability.description)
 
     def _improve_from_ability_score(
         self, attributes_in_order: Sequence[Statistic]

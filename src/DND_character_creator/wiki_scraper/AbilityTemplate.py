@@ -23,7 +23,9 @@ class AbilityTemplate(BaseModel):
         description="This ability allows of a use of a spell"
     )
     description: str
-    required_level: int
+    required_level: int = Field(
+        description="If more than one value is provided pick the lowest."
+    )
 
     def __init__(self, /, **data: Any):
         if data["ability_type"] not in AbilityType:
