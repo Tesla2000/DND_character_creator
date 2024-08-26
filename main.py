@@ -63,19 +63,19 @@ def main():
         **character_base.model_dump(),
     )
     character_wrapped = CharacterWrapper(character_full, config)
-
+    value_dict = dict(
+        ChainMap(
+            dict(
+                health=character_wrapped.health,
+                attributes=character_wrapped.attributes,
+                feats=character_wrapped.feats,
+            ),
+            character_full.get_without_stats(),
+        )
+    )
     print(
         json.dumps(
-            dict(
-                ChainMap(
-                    dict(
-                        health=character_wrapped.health,
-                        attributes=character_wrapped.attributes,
-                        feats=character_wrapped.feats,
-                    ),
-                    character_full.get_without_stats(),
-                )
-            ),
+            dict((key, value_dict[key]) for key in sorted(value_dict.keys())),
             indent=2,
         )
     )
