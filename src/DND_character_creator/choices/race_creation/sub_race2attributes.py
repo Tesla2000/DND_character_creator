@@ -15,7 +15,7 @@ def sub_race2stats(
     return SubRaceTemplate(
         **json.loads(
             next(
-                config._sub_races_root.joinpath(race.value).rglob(
+                config.sub_races_root.joinpath(race.value).rglob(
                     f"{sub_race}.json"
                 )
             ).read_text()

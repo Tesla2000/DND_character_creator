@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import requests
@@ -28,9 +27,7 @@ def scraper_wiki_feats(feat: Feat, output_dir: Path, llm):
     feat_result = llm.invoke(
         "Extract data about feat from page content:\n\n" + page_struct
     )
-    feat_path.write_text(
-        json.dumps(json.loads(feat_result.model_dump_json()), indent=2)
-    )
+    feat_path.write_text(feat_result.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":

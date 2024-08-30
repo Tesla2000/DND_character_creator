@@ -35,13 +35,13 @@ load_dotenv()
 
 class Config(BaseModel):
     _root: Path = Path(__file__).parent
-    _scraped_path: Path = _root / "wiki_scraper/scraped_data"
-    _sub_races_root: Path = _scraped_path / "sub_races"
-    _spells_root: Path = _scraped_path / "spells"
-    _feats_root: Path = _scraped_path / "feats"
-    _race_abilities_root: Path = _scraped_path / "abilities"
-    _main_class_abilities_root: Path = _scraped_path / "main_class_abilities"
-    _sub_class_abilities_root: Path = _scraped_path / "sub_class_abilities"
+    scraped_path: Path = _root / "wiki_scraper/scraped_data"
+    sub_races_root: Path = scraped_path / "sub_races"
+    spells_root: Path = scraped_path / "spells"
+    feats_root: Path = scraped_path / "feats"
+    race_abilities_root: Path = scraped_path / "abilities"
+    main_class_abilities_root: Path = scraped_path / "main_class_abilities"
+    sub_class_abilities_root: Path = scraped_path / "sub_class_abilities"
     pos_args: list[str] = Field(default_factory=list)
     level: Optional[PositiveInt] = None
     main_class: Optional[MainClass] = None

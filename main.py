@@ -62,13 +62,14 @@ def main():
         **character_full_template.model_dump(),
         **character_base.model_dump(),
     )
-    character_wrapped = CharacterWrapper(character_full, config)
+    character_wrapped = CharacterWrapper(character_full, config, llm)
     value_dict = dict(
         ChainMap(
             dict(
                 health=character_wrapped.health,
                 attributes=character_wrapped.attributes,
                 feats=character_wrapped.feats,
+                combat_abilities=character_wrapped.combat_abilities,
             ),
             character_full.get_without_stats(),
         )

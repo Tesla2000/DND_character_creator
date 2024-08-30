@@ -355,7 +355,7 @@ def filter_accessible(
             (spell, spell.value)
             for spell in spell_type
             if main_class.value
-            in config._spells_root.joinpath(spell_type.__name__.lower())
+            in config.spells_root.joinpath(spell_type.__name__.lower())
             .joinpath(spell.value)
             .read_text()
             .split(",")

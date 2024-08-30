@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from enum import Enum
 from pathlib import Path
 
@@ -63,9 +62,7 @@ def scraper_wiki_subclass_class(
         ability_path = sub_class_path.joinpath(f"{ability.name}.json")
         if ability_path.exists():
             continue
-        ability_path.write_text(
-            json.dumps(json.loads(ability.model_dump_json()), indent=2)
-        )
+        ability_path.write_text(ability.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":

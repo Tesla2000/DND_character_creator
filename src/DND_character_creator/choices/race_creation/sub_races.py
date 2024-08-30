@@ -26,6 +26,6 @@ def get_sub_races(main_race: MainRace, config: "Config") -> Type[Enum]:
 def _get_sub_races(main_race: MainRace, config: "Config"):
     for path in filter(
         lambda path: path.name in config.subclass_sources,
-        config._sub_races_root.joinpath(main_race.value).iterdir(),
+        config.sub_races_root.joinpath(main_race.value).iterdir(),
     ):
         yield from path.iterdir()

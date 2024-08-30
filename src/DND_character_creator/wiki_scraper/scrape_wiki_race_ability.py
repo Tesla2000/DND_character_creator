@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import requests
@@ -35,9 +34,7 @@ def scraper_wiki_race(race: MainRace, output_dir: Path, llm):
         json_path = race_path.joinpath(f"{ability.name}.json")
         if json_path.exists():
             continue
-        json_path.write_text(
-            json.dumps(json.loads(ability.model_dump_json()), indent=2)
-        )
+        json_path.write_text(ability.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":

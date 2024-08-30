@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import re
 from pathlib import Path
 
@@ -42,7 +41,7 @@ def scraper_wiki_race(race: MainRace, output_dir: Path, llm):
         )
         for sub_race in result.sub_races:
             directory.joinpath(f"{sub_race.name}.json").write_text(
-                json.dumps(json.loads(sub_race.model_dump_json()), indent=2)
+                sub_race.model_dump_json(indent=2)
             )
 
 
