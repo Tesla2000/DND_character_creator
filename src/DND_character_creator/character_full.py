@@ -15,6 +15,12 @@ from src.DND_character_creator.choices.class_creation.character_class import (
 from src.DND_character_creator.choices.class_creation.character_class import (
     subclasses,
 )  # noqa: E501
+from src.DND_character_creator.choices.equipment_creation.armor import (
+    ArmorName,
+)  # noqa: E501
+from src.DND_character_creator.choices.equipment_creation.weapons import (
+    WeaponName,
+)
 from src.DND_character_creator.choices.invocations.eldritch_invocation import (
     WarlockPact,
 )
@@ -53,6 +59,17 @@ class CharacterFull(CharacterBase):
     sub_race: str
     sub_class: str
     warlock_pack: Optional[WarlockPact]
+    armor: ArmorName = Field(
+        description="You would typically have clothes for spell casters. You "
+        "have a total of 'amount_of_gold_for_equipment' to spend "
+        "for both armor and weapons. Barbarians and Monks usally "
+        "don't use armor either."
+    )
+    weapons: list[WeaponName] = Field(
+        description="You would typically leave it empty for spell casters. "
+        "You have a total of 'amount_of_gold_for_equipment' to "
+        "spend for both armor and weapons."
+    )
 
     def get_without_stats(self):
         return self.model_dump(

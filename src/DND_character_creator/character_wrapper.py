@@ -22,6 +22,17 @@ from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import 
 from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import (  # noqa: E501
     n_maneuvers,
 )  # noqa: E501
+from src.DND_character_creator.choices.equipment_creation.armor import Armor
+from src.DND_character_creator.choices.equipment_creation.armor import (
+    armor_list,
+)  # noqa: E501
+from src.DND_character_creator.choices.equipment_creation.armor import (
+    ArmorCategory,
+)  # noqa: E501
+from src.DND_character_creator.choices.equipment_creation.item import Item
+from src.DND_character_creator.choices.equipment_creation.weapons import (
+    weapon_list,
+)
 from src.DND_character_creator.choices.feat_creation.ability_score_improvements import (  # noqa: E501
     main_class2ability_score_improvements,
 )
@@ -87,6 +98,7 @@ class CharacterWrapper:
         self._fighting_styles = None
         self._battle_maneuvers = None
         self._saving_throws = None
+        self._equipment = None
 
     @property
     def health(self) -> int:
@@ -168,12 +180,13 @@ class CharacterWrapper:
         ability_score_improvements = main_class2ability_score_improvements[
             self.character.main_class
         ]
-        for improvements, level_required in enumerate(
+        n_improvements = 0
+        for n_improvements, level_required in enumerate(
             ability_score_improvements
         ):
             if level_required > self.character.level:
                 break
-        improvements += self._race_stats.additional_feat
+        n_improvements += self._race_stats.additional_feat
         self._feats = list(
             islice(
                 chain.from_iterable(
@@ -182,10 +195,33 @@ class CharacterWrapper:
                         repeat(Feat.ABILITY_SCORE_IMPROVEMENT),
                     )
                 ),
-                improvements,
+                n_improvements,
             )
         )
         return self._feats
+
+    @property
+    def equipment(self) -> list[Item]:
+        if self._equipment:
+            return self._equipment
+        character_gold = self.character.amount_of_gold_for_equipment
+        armor = next(
+            armor for armor in armor_list if armor.name == self.character.armor
+        )
+        if armor.cost > character_gold:
+            self._equipment = [armor_list[0]]  # clothes
+        else:
+            character_gold -= armor.cost
+            self._equipment = [armor]
+        for weapon_name in self.character.weapons:
+            weapon = next(
+                weapon for weapon in weapon_list if weapon.name == weapon_name
+            )
+            if weapon.cost > character_gold:
+                continue
+            character_gold -= weapon.cost
+            self._equipment.append(weapon)
+        return self._equipment
 
     @property
     def saving_throws(self) -> set[Statistic]:
@@ -369,6 +405,16 @@ class CharacterWrapper:
             ):
                 abilities.append(ability.description)
         return abilities
+
+    @property
+    def ac(self):
+        armor = next(filter(Armor.__instancecheck__, self.equipment))
+        bonus = self.attributes[Statistic.DEXTERITY] // 2 - 5
+        if armor.category == ArmorCategory.HEAVY:
+            bonus = 0
+        if armor.category == ArmorCategory.MEDIUM:
+            bonus = min(2, bonus)
+        return armor.base_ac + bonus
 
     def _feat2feat_template(self, feat: Feat) -> FeatTemplate:
         return FeatTemplate(

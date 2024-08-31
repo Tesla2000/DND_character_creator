@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any
 from typing import Optional
@@ -94,6 +95,7 @@ class Config(BaseModel):
     ideals: Optional[str] = None
     bounds: Optional[str] = None
     weaknesses: Optional[str] = None
+    money_limit: int = sys.maxsize
 
     def __init__(self, /, **data: Any):
         super().__init__(**data)

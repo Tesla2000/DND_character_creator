@@ -48,6 +48,7 @@ class CharacterBase(BaseModel):
     ideals: str
     bounds: str
     weaknesses: str
+    amount_of_gold_for_equipment: int
 
 
 def get_base_character_template(
