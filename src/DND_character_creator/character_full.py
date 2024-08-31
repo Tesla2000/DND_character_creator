@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from typing import Optional
 from typing import Type
 
 from pydantic import BaseModel
@@ -14,6 +15,9 @@ from src.DND_character_creator.choices.class_creation.character_class import (
 from src.DND_character_creator.choices.class_creation.character_class import (
     subclasses,
 )  # noqa: E501
+from src.DND_character_creator.choices.invocations.eldritch_invocation import (
+    WarlockPact,
+)
 from src.DND_character_creator.choices.race_creation.sub_races import (
     get_sub_races,
 )
@@ -48,6 +52,7 @@ class CharacterFull(CharacterBase):
     feats: list[Feat]
     sub_race: str
     sub_class: str
+    warlock_pack: Optional[WarlockPact]
 
     def get_without_stats(self):
         return self.model_dump(
@@ -139,6 +144,13 @@ def get_full_character_template(
         sub_class=(subclasses[character_base.main_class], ...),
     )
     pre_set_values = {}
+    if (
+        character_base.main_class == MainClass.WARLOCK
+        and character_base.level >= 2
+    ):
+        fields_dictionary["warlock_pack"] = (WarlockPact, ...)
+    else:
+        pre_set_values["warlock_pack"] = None
     for key in tuple(fields_dictionary.keys()):
         if (pre_set_value := getattr(config, key)) is None:
             continue

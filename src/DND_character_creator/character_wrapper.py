@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from enum import Enum
 from itertools import chain
 from itertools import islice
 from itertools import repeat
@@ -39,6 +40,12 @@ from src.DND_character_creator.choices.health_creation.health_creation_method im
 from src.DND_character_creator.choices.health_creation.hit_dice import (
     class2hit_die,
 )
+from src.DND_character_creator.choices.invocations.eldritch_invocation import (
+    invocations,
+)  # noqa: E501
+from src.DND_character_creator.choices.invocations.eldritch_invocation import (
+    n_eldrich_invocations,
+)  # noqa: E501
 from src.DND_character_creator.choices.main_class2saving_throws import (
     main_class2saving_throws,
 )
@@ -211,6 +218,54 @@ class CharacterWrapper:
         }
 
     @property
+    def eldritch_invocations(self) -> dict[BattleManeuver, str]:
+        n_invocations = n_eldrich_invocations(self)
+        if not n_invocations:
+            return {}
+        eldritch_invocation_fields = tuple(
+            f"eldritch_invocation{i}" for i in range(1, 1 + n_invocations)
+        )
+        invocation = Enum(
+            "Invocation",
+            {
+                invocation.name.upper().replace(" ", "_"): invocation.name
+                for invocation in invocations
+                if invocation.required_level <= self.character.level
+                and (
+                    invocation.pact is None
+                    or invocation.pact == self.character.warlock_pack
+                )
+            },
+        )
+        fields_dictionary = {
+            field_name: (invocation, ...)
+            for field_name in eldritch_invocation_fields
+        }
+        invocations_model = create_model(
+            "EldritchInvocations",
+            **fields_dictionary,
+            __base__=BaseModel,
+        )
+        eldritch_invocations_llm = self.llm.with_structured_output(
+            invocations_model
+        )
+        eldritch_invocations = attrgetter(*eldritch_invocation_fields)(
+            eldritch_invocations_llm.invoke(
+                "Given the description of character pick suitable eldritch "
+                "invocations.\n\nDescription:\n\n"
+                + self.character.model_dump_json(indent=2)
+            )
+        )
+        return {
+            invocation.value: next(
+                invocation.description
+                for invocation in invocations
+                if invocation.name == invocation.value
+            )
+            for invocation in eldritch_invocations
+        }
+
+    @property
     def fighting_battle_maneuvers(self) -> dict[FightingStyle, str]:
         n_styles = n_fighting_styles(self)
         if not n_styles:
@@ -230,8 +285,8 @@ class CharacterWrapper:
         fighting_style_llm = self.llm.with_structured_output(fighting_styles)
         picked_styles = attrgetter(*fighting_style_fields)(
             fighting_style_llm.invoke(
-                f"Given the description of character pick suitable fighting "
-                f"styles.\n\nDescription:\n\n"
+                f"Given the description of character pick suitable battle "
+                f"maneuvers.\n\nDescription:\n\n"
                 f"{self.character.model_dump_json(indent=2)}"
             )
         )
