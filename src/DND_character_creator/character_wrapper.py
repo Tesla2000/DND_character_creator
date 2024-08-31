@@ -83,6 +83,10 @@ class CharacterWrapper:
         self._race_stats = sub_race2stats(
             self.character.main_race, self.character.sub_race, config
         )
+        self._eldritch_invocations = None
+        self._fighting_styles = None
+        self._battle_maneuvers = None
+        self._saving_throws = None
 
     @property
     def health(self) -> int:
@@ -185,13 +189,21 @@ class CharacterWrapper:
 
     @property
     def saving_throws(self) -> set[Statistic]:
-        return main_class2saving_throws[self.character.main_class]
+        if self._saving_throws:
+            return self._saving_throws
+        self._saving_throws = main_class2saving_throws[
+            self.character.main_class
+        ]
+        return self._saving_throws
 
     @property
     def fighting_styles(self) -> dict[BattleManeuver, str]:
+        if self._fighting_styles:
+            return self._fighting_styles
         n_styles = n_maneuvers(self)
         if not n_styles:
-            return {}
+            self._fighting_styles = {}
+            return self._fighting_styles
         battle_maneuver_fields = tuple(
             f"battle_maneuver{i}" for i in range(1, 1 + n_styles)
         )
@@ -212,13 +224,16 @@ class CharacterWrapper:
                 + self.character.model_dump_json(indent=2)
             )
         )
-        return {
+        self._fighting_styles = {
             maneuver: maneuver_descriptions[maneuver]
             for maneuver in picked_maneuvers
         }
+        return self._fighting_styles
 
     @property
-    def eldritch_invocations(self) -> dict[BattleManeuver, str]:
+    def eldritch_invocations(self) -> dict[str, str]:
+        if self._eldritch_invocations:
+            return self._eldritch_invocations
         n_invocations = n_eldrich_invocations(self)
         if not n_invocations:
             return {}
@@ -256,7 +271,7 @@ class CharacterWrapper:
                 + self.character.model_dump_json(indent=2)
             )
         )
-        return {
+        self._eldritch_invocations = {
             invocation.value: next(
                 invocation.description
                 for invocation in invocations
@@ -264,9 +279,12 @@ class CharacterWrapper:
             )
             for invocation in eldritch_invocations
         }
+        return self._eldritch_invocations
 
     @property
-    def fighting_battle_maneuvers(self) -> dict[FightingStyle, str]:
+    def battle_maneuvers(self) -> dict[FightingStyle, str]:
+        if self._battle_maneuvers:
+            return self._battle_maneuvers
         n_styles = n_fighting_styles(self)
         if not n_styles:
             return {}
@@ -290,10 +308,11 @@ class CharacterWrapper:
                 f"{self.character.model_dump_json(indent=2)}"
             )
         )
-        return {
+        self._battle_maneuvers = {
             style: fighting_style_descriptions[style]
             for style in picked_styles
         }
+        return self._battle_maneuvers
 
     @property
     def combat_abilities(self) -> list[str]:

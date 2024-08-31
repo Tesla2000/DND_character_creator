@@ -70,6 +70,10 @@ def main():
                 attributes=character_wrapped.attributes,
                 feats=character_wrapped.feats,
                 combat_abilities=character_wrapped.combat_abilities,
+                saving_throws=character_wrapped.saving_throws,
+                fighting_style=character_wrapped.fighting_styles,
+                battle_maneuvers=character_wrapped.battle_maneuvers,
+                eldritch_invocations=character_wrapped.eldritch_invocations,
             ),
             character_full.get_without_stats(),
         )
