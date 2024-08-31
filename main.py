@@ -75,6 +75,7 @@ def main():
                 battle_maneuvers=character_wrapped.battle_maneuvers,
                 eldritch_invocations=character_wrapped.eldritch_invocations,
                 equipment=character_wrapped.equipment,
+                ac=character_wrapped.ac,
             ),
             character_full.get_without_stats(),
         )

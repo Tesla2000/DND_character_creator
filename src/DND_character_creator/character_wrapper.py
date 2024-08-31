@@ -109,7 +109,7 @@ class CharacterWrapper:
             average = hit_die // 2 + 1
             self._health = hit_die + (self.character.level - 1) * average
         self._health += self.character.level * (
-            (self.attributes[Statistic.CONSTITUTION] - 10) // 2
+            self.attributes[Statistic.CONSTITUTION] // 2 - 5
         )
         if Feat.TOUGH in self.feats:
             self._health += 2 * self.character.level
@@ -457,8 +457,8 @@ class CharacterWrapper:
             self._attributes[attributes_in_order[0]] += 2
 
     def _reduce_attributes_in_order(
-        self, attributes_in_order: tuple[Statistic, ...]
-    ) -> tuple[Statistic, ...]:
+        self, attributes_in_order: Sequence[Statistic]
+    ) -> Sequence[Statistic]:
         while (
             attributes_in_order
             and self._attributes[attributes_in_order[0]] == 20
