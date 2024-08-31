@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import TYPE_CHECKING
 
-from src.DND_character_creator.character_wrapper import CharacterWrapper
+if TYPE_CHECKING:
+    from src.DND_character_creator.character_wrapper import CharacterWrapper
 from src.DND_character_creator.choices.class_creation.character_class import (
     FighterSubclass,
 )  # noqa: E501
@@ -208,7 +210,7 @@ maneuver_descriptions = {
 }
 
 
-def n_maneuvers(character_wrapper: CharacterWrapper) -> int:
+def get_n_maneuvers(character_wrapper: "CharacterWrapper") -> int:
     conditions = [
         lambda character_wrapper: character_wrapper.character.main_class
         == MainClass.FIGHTER

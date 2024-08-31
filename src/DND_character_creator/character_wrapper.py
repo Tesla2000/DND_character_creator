@@ -7,12 +7,14 @@ from itertools import islice
 from itertools import repeat
 from operator import attrgetter
 from typing import Sequence
+from typing import TYPE_CHECKING
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel
 from pydantic import create_model
 
-from src.DND_character_creator.character_full import CharacterFull
+if TYPE_CHECKING:
+    from src.DND_character_creator.character_full import CharacterFull
 from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import (  # noqa: E501
     BattleManeuver,
 )  # noqa: E501
@@ -20,7 +22,7 @@ from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import 
     maneuver_descriptions,
 )  # noqa: E501
 from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import (  # noqa: E501
-    n_maneuvers,
+    get_n_maneuvers,
 )  # noqa: E501
 from src.DND_character_creator.choices.equipment_creation.armor import Armor
 from src.DND_character_creator.choices.equipment_creation.armor import (
@@ -221,27 +223,28 @@ class CharacterWrapper:
                 continue
             character_gold -= weapon.cost
             self._equipment.append(weapon)
+        self._equipment = [item.name for item in self._equipment]
         return self._equipment
 
     @property
-    def saving_throws(self) -> set[Statistic]:
+    def saving_throws(self) -> list[Statistic]:
         if self._saving_throws:
             return self._saving_throws
-        self._saving_throws = main_class2saving_throws[
-            self.character.main_class
-        ]
+        self._saving_throws = list(
+            main_class2saving_throws[self.character.main_class]
+        )
         return self._saving_throws
 
     @property
-    def fighting_styles(self) -> dict[BattleManeuver, str]:
-        if self._fighting_styles:
-            return self._fighting_styles
-        n_styles = n_maneuvers(self)
-        if not n_styles:
-            self._fighting_styles = {}
-            return self._fighting_styles
+    def battle_maneuvers(self) -> dict[BattleManeuver, str]:
+        if self._battle_maneuvers:
+            return self._battle_maneuvers
+        n_maneuvers = get_n_maneuvers(self)
+        if not n_maneuvers:
+            self._battle_maneuvers = {}
+            return self._battle_maneuvers
         battle_maneuver_fields = tuple(
-            f"battle_maneuver{i}" for i in range(1, 1 + n_styles)
+            f"battle_maneuver{i}" for i in range(1, 1 + n_maneuvers)
         )
         fields_dictionary = {
             field_name: (BattleManeuver, ...)
@@ -260,11 +263,11 @@ class CharacterWrapper:
                 + self.character.model_dump_json(indent=2)
             )
         )
-        self._fighting_styles = {
+        self._battle_maneuvers = {
             maneuver: maneuver_descriptions[maneuver]
             for maneuver in picked_maneuvers
         }
-        return self._fighting_styles
+        return self._battle_maneuvers
 
     @property
     def eldritch_invocations(self) -> dict[str, str]:
@@ -284,7 +287,7 @@ class CharacterWrapper:
                 if invocation.required_level <= self.character.level
                 and (
                     invocation.pact is None
-                    or invocation.pact == self.character.warlock_pack
+                    or invocation.pact == self.character.warlock_pact
                 )
             },
         )
@@ -318,9 +321,9 @@ class CharacterWrapper:
         return self._eldritch_invocations
 
     @property
-    def battle_maneuvers(self) -> dict[FightingStyle, str]:
-        if self._battle_maneuvers:
-            return self._battle_maneuvers
+    def fighting_styles(self) -> dict[FightingStyle, str]:
+        if self._fighting_styles:
+            return self._fighting_styles
         n_styles = n_fighting_styles(self)
         if not n_styles:
             return {}
@@ -344,21 +347,18 @@ class CharacterWrapper:
                 f"{self.character.model_dump_json(indent=2)}"
             )
         )
-        self._battle_maneuvers = {
+        self._fighting_styles = {
             style: fighting_style_descriptions[style]
             for style in picked_styles
         }
-        return self._battle_maneuvers
+        return self._fighting_styles
 
     @property
     def combat_abilities(self) -> list[str]:
         abilities = []
         for feat in self.feats:
             ability = self._feat2feat_template(feat).ability
-            if (
-                ability.combat_related
-                and ability.required_level <= self.character.level
-            ):
+            if self._ability_valid(ability):
                 abilities.append(ability.description)
         for ability_name in self._race_stats.other_active_abilities:
             ability_name = ability_name.split(":")[0]
@@ -371,10 +371,7 @@ class CharacterWrapper:
                     .read_text()
                 )
             )
-            if (
-                ability.combat_related
-                and ability.required_level <= self.character.level
-            ):
+            if self._ability_valid(ability):
                 abilities.append(ability.description)
         for (
             main_class_ability_path
@@ -384,10 +381,7 @@ class CharacterWrapper:
             ability = AbilityTemplate(
                 **json.loads(main_class_ability_path.read_text())
             )
-            if (
-                ability.combat_related
-                and ability.required_level <= self.character.level
-            ):
+            if self._ability_valid(ability):
                 abilities.append(ability.description)
         for sub_class_ability_path in (
             self.config.sub_class_abilities_root.joinpath(
@@ -399,10 +393,7 @@ class CharacterWrapper:
             ability = AbilityTemplate(
                 **json.loads(sub_class_ability_path.read_text())
             )
-            if (
-                ability.combat_related
-                and ability.required_level <= self.character.level
-            ):
+            if self._ability_valid(ability):
                 abilities.append(ability.description)
         return abilities
 
@@ -414,7 +405,7 @@ class CharacterWrapper:
             bonus = 0
         if armor.category == ArmorCategory.MEDIUM:
             bonus = min(2, bonus)
-        return armor.base_ac + bonus
+        return armor.base_ac + bonus + 2 * self.character.uses_shield
 
     def _feat2feat_template(self, feat: Feat) -> FeatTemplate:
         return FeatTemplate(
@@ -465,3 +456,10 @@ class CharacterWrapper:
         ):
             attributes_in_order = attributes_in_order[1:]
         return attributes_in_order
+
+    def _ability_valid(self, ability: AbilityTemplate) -> bool:
+        return (
+            ability
+            and ability.combat_related
+            and ability.required_level <= self.character.level
+        )

@@ -26,7 +26,7 @@ def main():
     character_base_template, base_pre_defined_fields = (
         get_base_character_template(config)
     )
-    description_base = config.base_description.strip()
+    description_base = "Create a D&D e5 " + config.base_description.strip()
     if base_pre_defined_fields:
         description_base += (
             f"\nThe following details about the character are "

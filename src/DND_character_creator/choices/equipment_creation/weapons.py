@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Optional
 
 from src.DND_character_creator.choices.equipment_creation.item import Item
 
@@ -62,8 +63,8 @@ class WeaponName(str, Enum):
 
 class Weapon(Item):
     name: WeaponName
-    damage_type: DamageType
-    base_hit_die: HitDieSize
+    damage_type: Optional[DamageType]
+    base_hit_die: Optional[HitDieSize]
     two_dies: bool = False
     is_martial: bool = False
     is_ammunition: bool = False
@@ -76,9 +77,6 @@ class Weapon(Item):
     is_thrown: bool = False
     is_two_handed: bool = False
     is_versatile: bool = False
-    base_ac: int = 0
-    cost: int
-    weight: int
 
 
 weapon_list = [

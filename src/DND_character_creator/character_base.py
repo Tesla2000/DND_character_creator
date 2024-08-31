@@ -80,6 +80,7 @@ def get_base_character_template(
         ideals=(str, ...),
         bounds=(str, ...),
         weaknesses=(str, ...),
+        amount_of_gold_for_equipment=(int, ...),
     )
     pre_set_values = {}
     for key in tuple(fields_dictionary.keys()):

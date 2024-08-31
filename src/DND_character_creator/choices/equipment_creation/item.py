@@ -5,5 +5,5 @@ from pydantic import BaseModel
 
 class Item(BaseModel):
     name: str
-    cost: int
-    weight: int = 0
+    cost: float
+    weight: float = 0

@@ -15,9 +15,12 @@ from .choices.alignment import Alignment
 from .choices.background_creatrion.background import Background
 from .choices.class_creation.character_class import MainClass
 from .choices.class_creation.character_class import subclasses
+from .choices.equipment_creation.armor import ArmorName
+from .choices.equipment_creation.weapons import WeaponName
 from .choices.health_creation.health_creation_method import (
     HealthCreationMethod,
 )
+from .choices.invocations.eldritch_invocation import WarlockPact
 from .choices.race_creation.main_race import MainRace
 from .choices.race_creation.sub_race_sources import DNDResource
 from .choices.race_creation.sub_races import get_sub_races
@@ -46,13 +49,8 @@ class Config(BaseModel):
     pos_args: list[str] = Field(default_factory=list)
     level: Optional[PositiveInt] = None
     main_class: Optional[MainClass] = None
-    base_description: str = (
-        "Create a D&D e5 PC obsessed with protecting forests for any cost."
-    )
-    full_description: str = (
-        "Fill up details of a D&D e5 character obsessed with protecting "
-        "forests for any cost."
-    )
+    base_description: str = "NPC focused on tanking in heavy armor."
+    full_description: str = base_description
     stats_creation_method: StatsCreationMethod = (
         StatsCreationMethod.STANDARD_ARRAY
     )
@@ -95,7 +93,11 @@ class Config(BaseModel):
     ideals: Optional[str] = None
     bounds: Optional[str] = None
     weaknesses: Optional[str] = None
-    money_limit: int = sys.maxsize
+    amount_of_gold_for_equipment: Optional[int] = sys.maxsize
+    warlock_pact: Optional[WarlockPact] = None
+    armor: Optional[ArmorName] = None
+    uses_shield: Optional[bool] = None
+    weapons: Optional[list[WeaponName]] = None
 
     def __init__(self, /, **data: Any):
         super().__init__(**data)

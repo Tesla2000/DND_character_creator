@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import Optional
+from typing import TYPE_CHECKING
 
-from pydantic import BaseClass
+from pydantic import BaseModel
 
-from src.DND_character_creator.character_wrapper import CharacterWrapper
+if TYPE_CHECKING:
+    from src.DND_character_creator.character_wrapper import CharacterWrapper
 from src.DND_character_creator.choices.class_creation.character_class import (
     MainClass,
 )
@@ -18,7 +20,7 @@ class WarlockPact(str, Enum):
     PACT_OF_THE_BLADE = "Blade"
 
 
-class EldritchInvocation(BaseClass):
+class EldritchInvocation(BaseModel):
     name: str
     description: str
     required_level: int
@@ -370,7 +372,7 @@ invocations: list[EldritchInvocation] = [
 ]
 
 
-def n_eldrich_invocations(character_wrapper: CharacterWrapper) -> int:
+def n_eldrich_invocations(character_wrapper: "CharacterWrapper") -> int:
     conditions = [
         lambda character_wrapper: character_wrapper.character.main_class
         == MainClass.WARLOCK

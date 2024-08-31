@@ -51,20 +51,21 @@ from src.DND_character_creator.feats import Feat
 
 
 class CharacterFull(CharacterBase):
-    cantrips: list[Cantrip]
-    first_level_spells: list[FirstLevel]
-    second_level_spells: list[SecondLevel]
-    third_level_spells: list[ThirdLevel]
+    cantrips: list[Cantrip] = Field(default_factory=list)
+    first_level_spells: list[FirstLevel] = Field(default_factory=list)
+    second_level_spells: list[SecondLevel] = Field(default_factory=list)
+    third_level_spells: list[ThirdLevel] = Field(default_factory=list)
     feats: list[Feat]
     sub_race: str
     sub_class: str
-    warlock_pack: Optional[WarlockPact]
+    warlock_pact: Optional[WarlockPact]
     armor: ArmorName = Field(
         description="You would typically have clothes for spell casters. You "
         "have a total of 'amount_of_gold_for_equipment' to spend "
         "for both armor and weapons. Barbarians and Monks usally "
         "don't use armor either."
     )
+    uses_shield: bool
     weapons: list[WeaponName] = Field(
         description="You would typically leave it empty for spell casters. "
         "You have a total of 'amount_of_gold_for_equipment' to "
@@ -159,15 +160,37 @@ def get_full_character_template(
         ),
         sub_race=(get_sub_races(character_base.main_race, config), ...),
         sub_class=(subclasses[character_base.main_class], ...),
+        armor=(
+            ArmorName,
+            Field(
+                description="You would typically have clothes for spell "
+                "casters. "
+                "You have a total of 'amount_of_gold_for_equipment' to spend "
+                "for both armor and weapons. Barbarians and Monks usually "
+                "don't use armor either. Shield is not a valid input. Should "
+                "be "
+                "provided in uses_shield field."
+            ),
+        ),
+        uses_shield=(bool, ...),
+        weapons=(
+            list[WeaponName],
+            Field(
+                description="You would typically leave it empty for spell "
+                "casters."
+                " You have a total of 'amount_of_gold_for_equipment' to "
+                "spend for both armor and weapons."
+            ),
+        ),
     )
     pre_set_values = {}
     if (
         character_base.main_class == MainClass.WARLOCK
         and character_base.level >= 2
     ):
-        fields_dictionary["warlock_pack"] = (WarlockPact, ...)
+        fields_dictionary["warlock_pact"] = (WarlockPact, ...)
     else:
-        pre_set_values["warlock_pack"] = None
+        pre_set_values["warlock_pact"] = None
     for key in tuple(fields_dictionary.keys()):
         if (pre_set_value := getattr(config, key)) is None:
             continue
