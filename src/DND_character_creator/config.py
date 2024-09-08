@@ -39,6 +39,11 @@ load_dotenv()
 
 class Config(BaseModel):
     _root: Path = Path(__file__).parent
+    characters_output_dir: Path = _root / "characters_output"
+
+    pdf_creator: Path = _root / "pdf_creator"
+    tex_prototype: Path = pdf_creator / "prototype.tex"
+
     scraped_path: Path = _root / "wiki_scraper/scraped_data"
     sub_races_root: Path = scraped_path / "sub_races"
     spells_root: Path = scraped_path / "spells"
@@ -46,6 +51,7 @@ class Config(BaseModel):
     race_abilities_root: Path = scraped_path / "abilities"
     main_class_abilities_root: Path = scraped_path / "main_class_abilities"
     sub_class_abilities_root: Path = scraped_path / "sub_class_abilities"
+
     pos_args: list[str] = Field(default_factory=list)
     level: Optional[PositiveInt] = None
     main_class: Optional[MainClass] = None

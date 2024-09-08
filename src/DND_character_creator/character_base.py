@@ -28,12 +28,12 @@ class CharacterBase(BaseModel):
     level: int
     age: int
     main_class: MainClass
-    first_most_important_stat: Statistic
-    second_most_important_stat: Statistic
-    third_most_important_stat: Statistic
-    forth_most_important_stat: Statistic
-    fifth_most_important_stat: Statistic
-    sixth_most_important_stat: Statistic
+    # first_most_important_stat: Statistic
+    # second_most_important_stat: Statistic
+    # third_most_important_stat: Statistic
+    # forth_most_important_stat: Statistic
+    # fifth_most_important_stat: Statistic
+    # sixth_most_important_stat: Statistic
     main_race: MainRace
     name: str
     background: Background
@@ -46,7 +46,7 @@ class CharacterBase(BaseModel):
     appearance: str
     character_traits: str
     ideals: str
-    bounds: str
+    bonds: str
     weaknesses: str
     amount_of_gold_for_equipment: int
 

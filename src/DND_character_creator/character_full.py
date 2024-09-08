@@ -27,6 +27,12 @@ from src.DND_character_creator.choices.invocations.eldritch_invocation import (
 from src.DND_character_creator.choices.race_creation.sub_races import (
     get_sub_races,
 )
+from src.DND_character_creator.choices.spell_slots.max_spell_levels import (  # noqa: E501
+    full_caster_max_spell_level,
+)  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.max_spell_levels import (  # noqa: E501
+    half_caster_max_spell_level,
+)  # noqa: E501
 from src.DND_character_creator.choices.spell_slots.spell_slots import Cantrip
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
     filter_accessible,
@@ -39,12 +45,6 @@ from src.DND_character_creator.choices.spell_slots.spell_slots import (
 )  # noqa: E501
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
     ThirdLevel,
-)  # noqa: E501
-from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (  # noqa: E501
-    full_caster_max_spell_level,
-)  # noqa: E501
-from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (  # noqa: E501
-    half_caster_max_spell_level,
 )  # noqa: E501
 from src.DND_character_creator.config import Config
 from src.DND_character_creator.feats import Feat

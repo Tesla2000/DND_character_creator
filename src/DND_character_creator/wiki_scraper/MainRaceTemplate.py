@@ -5,7 +5,7 @@ from pydantic import Field
 
 from src.DND_character_creator.choices.language import Language
 from src.DND_character_creator.other_profficiencies import ToolProficiency
-from src.DND_character_creator.skill_proficiency import SkillProficiencyAndAny
+from src.DND_character_creator.skill_proficiency import SkillAndAny
 
 
 class Statistics(BaseModel):
@@ -28,7 +28,7 @@ class SubRaceTemplate(BaseModel):
     languages: list[Language] = Field(
         description="List of languages known by this race"
     )
-    skill_proficiencies: list[SkillProficiencyAndAny] = Field(
+    skill_proficiencies: list[SkillAndAny] = Field(
         description="List of skill proficiencies. Note Thieves' Cant is a "
         "language not Skill proficiency and doesn't belong here. "
         "Neither does Thieves' tools which is a tool proficiency."

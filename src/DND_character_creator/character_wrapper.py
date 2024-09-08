@@ -6,12 +6,25 @@ from itertools import chain
 from itertools import islice
 from itertools import repeat
 from operator import attrgetter
+from typing import Optional
 from typing import Sequence
 from typing import TYPE_CHECKING
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel
 from pydantic import create_model
+
+from src.DND_character_creator.choices.language import Language
+from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (  # noqa: E501
+    main_class2spell_slots,
+)
+from src.DND_character_creator.choices.spell_slots.spellcasting_abilities import (  # noqa: E501
+    spellcasting_ability_map,
+)
+from src.DND_character_creator.other_profficiencies import ToolProficiency
+from src.DND_character_creator.skill_proficiency import Skill
+from src.DND_character_creator.skill_proficiency import skill2ability
+from src.DND_character_creator.skill_proficiency import SkillAndAny
 
 if TYPE_CHECKING:
     from src.DND_character_creator.character_full import CharacterFull
@@ -34,6 +47,7 @@ from src.DND_character_creator.choices.equipment_creation.armor import (
 from src.DND_character_creator.choices.equipment_creation.item import Item
 from src.DND_character_creator.choices.equipment_creation.weapons import (
     weapon_list,
+    Weapon,
 )
 from src.DND_character_creator.choices.feat_creation.ability_score_improvements import (  # noqa: E501
     main_class2ability_score_improvements,
@@ -118,6 +132,34 @@ class CharacterWrapper:
         return self._health
 
     @property
+    def skill_proficiencies(self) -> list[SkillAndAny]:
+        return sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        ).skill_proficiencies
+
+    @property
+    def skill_modifiers(self) -> dict[Skill, int]:
+        return {
+            Skill(skill): self.modifiers[skill2ability[skill]]
+            + (skill in self.skill_proficiencies) * self.proficiency_bonus
+            for skill in Skill
+        }
+
+    @property
+    def initiative(self) -> int:
+        return self.modifiers[Statistic.DEXTERITY]
+
+    @property
+    def speed(self) -> int:
+        return sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        ).speed
+
+    @property
+    def hit_die(self) -> int:
+        return 0
+
+    @property
     def attributes(self) -> dict[Statistic, int]:
         attributes_in_order = (
             self.character.first_most_important_stat,
@@ -176,6 +218,21 @@ class CharacterWrapper:
         return self._attributes
 
     @property
+    def modifiers(self) -> dict[Statistic, int]:
+        return {key: value - 10 // 2 for key, value in self.attributes.items()}
+
+    @property
+    def saving_throw_modifiers(self) -> dict[Statistic, int]:
+        return {
+            key: value + self.proficiency_bonus * (key in self.saving_throws)
+            for key, value in self.modifiers.items()
+        }
+
+    @property
+    def proficiency_bonus(self) -> int:
+        return self.character.level // 4 + 2
+
+    @property
     def feats(self) -> list[Feat]:
         if self._feats:
             return self._feats
@@ -225,6 +282,60 @@ class CharacterWrapper:
             self._equipment.append(weapon)
         self._equipment = [item.name for item in self._equipment]
         return self._equipment
+
+    @property
+    def weapons(self) -> list[Weapon]:
+        return list(filter(Weapon.__instancecheck__, self.equipment))
+
+    @property
+    def capacity(self) -> int:
+        return 15 * self.attributes[Statistic.STRENGTH]
+
+    @property
+    def weapon_proficiencies(self) -> list[Weapon]:
+        return self.weapons
+
+    @property
+    def additional_attack(self) -> list[Weapon]:
+        return list(filter(Weapon.__instancecheck__, self.equipment))
+
+    @property
+    def languages(self) -> list[Language]:
+        return sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        ).languages
+
+    @property
+    def tool_proficiencies(self) -> list[ToolProficiency]:
+        return sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        ).tool_proficiencies
+
+    @property
+    def spellcasting_ability(self) -> Optional[Statistic]:
+        return spellcasting_ability_map.get(self.character.main_class)
+
+    @property
+    def spellsave_dc(self) -> int:
+        if self.spellcasting_ability is None:
+            return 0
+        return (
+            8
+            + self.proficiency_bonus
+            + self.modifiers[self.spellcasting_ability]
+        )
+
+    @property
+    def spell_attack_bonus(self) -> int:
+        if self.spellcasting_ability is None:
+            return 0
+        return self.modifiers[self.spellcasting_ability]
+
+    @property
+    def spell_slots(self) -> tuple[int, ...]:
+        return main_class2spell_slots[self.character.main_class][
+            self.character.level
+        ]
 
     @property
     def saving_throws(self) -> list[Statistic]:

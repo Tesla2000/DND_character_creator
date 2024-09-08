@@ -17,6 +17,7 @@ from src.DND_character_creator.character_wrapper import CharacterWrapper
 from src.DND_character_creator.config import Config
 from src.DND_character_creator.config import create_config_with_args
 from src.DND_character_creator.config import parse_arguments
+from src.DND_character_creator.pdf_creator.create_pdf import create_pdf
 
 
 def main():
@@ -63,29 +64,7 @@ def main():
         **character_base.model_dump(),
     )
     character_wrapped = CharacterWrapper(character_full, config, llm)
-    value_dict = dict(
-        ChainMap(
-            dict(
-                health=character_wrapped.health,
-                attributes=character_wrapped.attributes,
-                feats=character_wrapped.feats,
-                combat_abilities=character_wrapped.combat_abilities,
-                saving_throws=character_wrapped.saving_throws,
-                fighting_style=character_wrapped.fighting_styles,
-                battle_maneuvers=character_wrapped.battle_maneuvers,
-                eldritch_invocations=character_wrapped.eldritch_invocations,
-                equipment=character_wrapped.equipment,
-                ac=character_wrapped.ac,
-            ),
-            character_full.get_without_stats(),
-        )
-    )
-    print(
-        json.dumps(
-            dict((key, value_dict[key]) for key in sorted(value_dict.keys())),
-            indent=2,
-        )
-    )
+    create_pdf(character_wrapped, character_full, config)
 
 
 if __name__ == "__main__":

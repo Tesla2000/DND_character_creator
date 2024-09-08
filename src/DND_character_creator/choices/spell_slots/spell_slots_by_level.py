@@ -1,93 +1,90 @@
 from __future__ import annotations
 
-half_caster_max_spell_level = [
-    0,
-    1,
-    1,
-    1,
-    2,
-    2,
-    2,
-    2,
-    3,
-    3,
-    3,
-    3,
-    4,
-    4,
-    4,
-    4,
-    5,
-    5,
-    5,
-    5,
+from src.DND_character_creator.choices.class_creation.character_class import (
+    MainClass,
+)
+
+none_caster_spell_slots = [
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
 ]
 
-eldritch_knight_max_spell_level = [
-    0,  # 3rd level
-    0,  # 3rd level
-    1,  # 3rd level
-    1,  # 4th level
-    1,  # 5th level
-    1,  # 6th level
-    2,  # 7th level
-    2,  # 8th level
-    2,  # 9th level
-    3,  # 10th level
-    3,  # 11th level
-    3,  # 12th level
-    3,  # 13th level
-    3,  # 14th level
-    3,  # 15th level
-    4,  # 16th level
-    4,  # 17th level
-    4,  # 18th level
-    4,  # 19th level
-    4,  # 20th level
+half_caster_spell_slots = [
+    (0, 0, 0, 0, 0, 0, 0, 0, 0),
+    (2, 0, 0, 0, 0, 0, 0, 0, 0),
+    (3, 0, 0, 0, 0, 0, 0, 0, 0),
+    (3, 0, 0, 0, 0, 0, 0, 0, 0),
+    (4, 2, 0, 0, 0, 0, 0, 0, 0),
+    (4, 2, 0, 0, 0, 0, 0, 0, 0),
+    (4, 3, 0, 0, 0, 0, 0, 0, 0),
+    (4, 3, 0, 0, 0, 0, 0, 0, 0),
+    (4, 3, 2, 0, 0, 0, 0, 0, 0),
+    (4, 3, 2, 0, 0, 0, 0, 0, 0),
+    (4, 3, 3, 0, 0, 0, 0, 0, 0),
+    (4, 3, 3, 0, 0, 0, 0, 0, 0),
+    (4, 3, 3, 1, 0, 0, 0, 0, 0),
+    (4, 3, 3, 1, 0, 0, 0, 0, 0),
+    (4, 3, 3, 2, 0, 0, 0, 0, 0),
+    (4, 3, 3, 2, 0, 0, 0, 0, 0),
+    (4, 3, 3, 3, 1, 0, 0, 0, 0),
+    (4, 3, 3, 3, 1, 0, 0, 0, 0),
+    (4, 3, 3, 3, 2, 0, 0, 0, 0),
+    (4, 3, 3, 3, 2, 0, 0, 0, 0),
 ]
 
-warlock_max_spell_level = [
-    1,  # 3rd level
-    1,  # 3rd level
-    2,  # 3rd level
-    2,  # 4th level
-    3,  # 5th level
-    3,  # 6th level
-    4,  # 7th level
-    4,  # 8th level
-    5,  # 9th level
-    5,  # 10th level
-    5,  # 11th level
-    5,  # 12th level
-    5,  # 13th level
-    5,  # 14th level
-    5,  # 15th level
-    5,  # 16th level
-    5,  # 17th level
-    5,  # 18th level
-    5,  # 19th level
-    5,  # 20th level
+full_caster_spell_slots = [
+    (2, 2, 0, 0, 0, 0, 0, 0, 0),  # 1st level
+    (2, 3, 0, 0, 0, 0, 0, 0, 0),  # 2nd level
+    (2, 4, 2, 0, 0, 0, 0, 0, 0),  # 3rd level
+    (3, 4, 3, 0, 0, 0, 0, 0, 0),  # 4th level
+    (3, 4, 3, 2, 0, 0, 0, 0, 0),  # 5th level
+    (3, 4, 3, 3, 0, 0, 0, 0, 0),  # 6th level
+    (3, 4, 3, 3, 1, 0, 0, 0, 0),  # 7th level
+    (3, 4, 3, 3, 2, 0, 0, 0, 0),  # 8th level
+    (3, 4, 3, 3, 3, 1, 0, 0, 0),  # 9th level
+    (4, 4, 3, 3, 3, 2, 0, 0, 0),  # 10th level
+    (4, 4, 3, 3, 3, 2, 1, 0, 0),  # 11th level
+    (4, 4, 3, 3, 3, 2, 1, 0, 0),  # 12th level
+    (4, 4, 3, 3, 3, 2, 1, 1, 0),  # 13th level
+    (4, 4, 3, 3, 3, 2, 1, 1, 0),  # 14th level
+    (4, 4, 3, 3, 3, 2, 1, 1, 1),  # 15th level
+    (4, 4, 3, 3, 3, 2, 1, 1, 1),  # 16th level
+    (4, 4, 3, 3, 3, 2, 1, 1, 1, 1),  # 17th level
+    (4, 4, 3, 3, 3, 3, 1, 1, 1, 1),  # 18th level
+    (4, 4, 3, 3, 3, 3, 2, 1, 1, 1),  # 19th level
+    (4, 4, 3, 3, 3, 3, 2, 2, 1, 1),  # 20th level
 ]
 
-full_caster_max_spell_level = [
-    1,
-    1,
-    2,
-    2,
-    3,
-    3,
-    4,
-    4,
-    5,
-    5,
-    6,
-    6,
-    7,
-    7,
-    8,
-    8,
-    9,
-    9,
-    9,
-    9,
-]
+main_class2spell_slots = {
+    MainClass.ARTIFICER: half_caster_spell_slots,
+    MainClass.BARD: full_caster_spell_slots,
+    MainClass.BARBARIAN: none_caster_spell_slots,
+    MainClass.CLERIC: full_caster_spell_slots,
+    MainClass.DRUID: full_caster_spell_slots,
+    MainClass.FIGHTER: none_caster_spell_slots,
+    MainClass.MONK: none_caster_spell_slots,
+    MainClass.PALADIN: half_caster_spell_slots,
+    MainClass.RANGER: half_caster_spell_slots,
+    MainClass.ROGUE: none_caster_spell_slots,
+    MainClass.SORCERER: full_caster_spell_slots,
+    MainClass.WARLOCK: half_caster_spell_slots,
+    MainClass.WIZARD: full_caster_spell_slots,
+}
