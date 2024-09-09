@@ -328,7 +328,9 @@ class CharacterWrapper:
     def spell_attack_bonus(self) -> int:
         if self.spellcasting_ability is None:
             return 0
-        return self.modifiers[self.spellcasting_ability]
+        return (
+            self.modifiers[self.spellcasting_ability] + self.proficiency_bonus
+        )
 
     @property
     def spell_slots(self) -> tuple[int, ...]:
