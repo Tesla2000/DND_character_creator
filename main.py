@@ -33,6 +33,10 @@ def main():
             f"\nThe following details about the character are "
             f"given:\n{json.dumps(base_pre_defined_fields, indent=2)}"
         )
+    description_base += (
+        "\nBe careful picking size of character some races "
+        "are smaller than others."
+    )
     base_template = llm.with_structured_output(character_base_template)
     character_base_template = base_template.invoke(description_base)
     character_base = CharacterBase(
