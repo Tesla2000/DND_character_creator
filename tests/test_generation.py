@@ -1,0 +1,81 @@
+# flake8: noqa E501
+from __future__ import annotations
+
+from langchain_openai import ChatOpenAI
+
+from src.DND_character_creator.character_full import CharacterFull
+from src.DND_character_creator.character_wrapper import CharacterWrapper
+from src.DND_character_creator.choices.stats_creation.statistic import (
+    Statistic,
+)
+from src.DND_character_creator.config import Config
+from src.DND_character_creator.config import create_config_with_args
+from src.DND_character_creator.config import parse_arguments
+from src.DND_character_creator.feats import Feat
+from src.DND_character_creator.pdf_creator.create_pdf import create_pdf
+
+
+def test():
+    args = parse_arguments(Config)
+    config = create_config_with_args(Config, args)
+    llm = ChatOpenAI(model=config.llm)
+    character_full = CharacterFull(
+        **{
+            "sex": "male",
+            "backstory": "Born into a family of blacksmiths, Thrain was always surrounded by the clang of metal and the heat of the forge. From a young age, he was taught the importance of strength and resilience, not just in crafting weapons, but in life itself. When his village was threatened by marauding bandits, Thrain took up arms to protect his home. He quickly became known for his unwavering defense and his ability to absorb blows that would fell lesser warriors. After successfully driving away the bandits, he decided to dedicate his life to becoming a master of heavy armor and shield techniques. Now, he travels the land, seeking to hone his skills in battle and defend those who cannot protect themselves. His heart is as strong as the steel he wields, and he believes that true strength lies in protecting others.",
+            "level": 5,
+            "age": 30,
+            "main_class": "Fighter",
+            "first_most_important_stat": "constitution",
+            "second_most_important_stat": "strength",
+            "third_most_important_stat": "dexterity",
+            "forth_most_important_stat": "wisdom",
+            "fifth_most_important_stat": "charisma",
+            "sixth_most_important_stat": "intelligence",
+            "main_race": "Dwarf",
+            "name": "Thrain Ironshield",
+            "background": "Soldier",
+            "alignment": "lawful_good",
+            "height": 180,
+            "weight": 100,
+            "eye_color": "blue",
+            "skin_color": "light",
+            "hairstyle": "short and braided",
+            "appearance": "Thrain is a stout dwarf with a broad chest and muscular arms, showcasing years of hard work and combat training. His heavy armor is polished to a shine, adorned with intricate engravings of his family crest. He carries a large shield, always at the ready, and his braided beard flows down to his chest, giving him a fierce but noble appearance.",
+            "character_traits": "Thrain is fiercely loyal to his friends and allies, often putting their safety above his own. He has a strong sense of justice and will not stand by while the innocent are harmed.",
+            "ideals": "Protection: It is my duty to protect those who cannot protect themselves, no matter the cost.",
+            "bonds": "I will always defend my homeland and the people I love, even if it means facing overwhelming odds.",
+            "weaknesses": "He can be overly stubborn at times, refusing to back down even when it may be wiser to retreat.",
+            "amount_of_gold_for_equipment": 9223372036854775807,
+            "cantrips": [],
+            "first_level_spells": [],
+            "second_level_spells": [],
+            "third_level_spells": [],
+            "feats": ["Tough", "Resilient", "Shield Master"],
+            "sub_race": "Mountain Dwarf",
+            "sub_class": "Battle Master",
+            "warlock_pact": None,
+            "armor": "Plate",
+            "uses_shield": True,
+            "weapons": ["Battleaxe", "Warhammer", "Longsword"],
+        }
+    )
+    character_wrapped = CharacterWrapper(character_full, config, llm)
+    character_wrapped.__dict__.update(
+        {
+            "_attributes": {
+                Statistic("charisma"): 10,
+                Statistic("constitution"): 17,
+                Statistic("dexterity"): 13,
+                Statistic("intelligence"): 8,
+                Statistic("strength"): 16,
+                Statistic("wisdom"): 12,
+            },
+            "_feats": [Feat("Tough")],
+        }
+    )
+    create_pdf(character_wrapped, character_full, config)
+
+
+if __name__ == "__main__":
+    exit(test())

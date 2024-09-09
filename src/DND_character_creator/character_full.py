@@ -62,7 +62,7 @@ class CharacterFull(CharacterBase):
     armor: ArmorName = Field(
         description="You would typically have clothes for spell casters. You "
         "have a total of 'amount_of_gold_for_equipment' to spend "
-        "for both armor and weapons. Barbarians and Monks usally "
+        "for both armor and weapons. Barbarians and Monks usually "
         "don't use armor either."
     )
     uses_shield: bool
@@ -71,18 +71,6 @@ class CharacterFull(CharacterBase):
         "You have a total of 'amount_of_gold_for_equipment' to "
         "spend for both armor and weapons."
     )
-
-    def get_without_stats(self):
-        return self.model_dump(
-            exclude={
-                "first_most_important_stat",
-                "second_most_important_stat",
-                "third_most_important_stat",
-                "fourth_most_important_stat",
-                "fifth_most_important_stat",
-                "sixth_most_important_stat",
-            }
-        )
 
 
 level_names = [
@@ -93,7 +81,7 @@ level_names = [
 ]
 
 
-class SpellFixing(BaseModel):
+class Fixing(BaseModel):
     def __init__(self, /, **data: Any):
         for level_name in level_names:
             for spell in data.get(level_name, []):
@@ -112,6 +100,8 @@ class SpellFixing(BaseModel):
                             data[reference_level_name].append(spell)
                             break
                     data[level_name].remove(spell)
+        in_weapons = tuple(WeaponName.__members__.values()).__contains__
+        data["weapons"] = list(filter(in_weapons, data["weapons"]))
         super().__init__(**data)
 
 
@@ -220,7 +210,7 @@ def get_full_character_template(
     character = create_model(
         "Character",
         **fields_dictionary,
-        __base__=SpellFixing,
+        __base__=Fixing,
         __doc__="""D&D e5 character""",
     )
     return character, pre_set_values

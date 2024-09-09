@@ -97,7 +97,7 @@ class Config(BaseModel):
     sub_class: Optional[str] = None
     character_traits: Optional[str] = None
     ideals: Optional[str] = None
-    bounds: Optional[str] = None
+    bonds: Optional[str] = None
     weaknesses: Optional[str] = None
     amount_of_gold_for_equipment: Optional[int] = sys.maxsize
     warlock_pact: Optional[WarlockPact] = None

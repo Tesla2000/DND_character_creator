@@ -6,6 +6,9 @@ import shutil
 from src.DND_character_creator.character_full import CharacterFull
 from src.DND_character_creator.character_wrapper import CharacterWrapper
 from src.DND_character_creator.config import Config
+from src.DND_character_creator.pdf_creator.remove_blank_page import (
+    remove_blank_page,
+)
 from src.DND_character_creator.pdf_creator.run_lunatex import run_lualatex
 from src.DND_character_creator.pdf_creator.update_prototype import (
     update_prototype,
@@ -29,6 +32,7 @@ def create_pdf(
     else:
         pdf_path = character_path.with_suffix(".pdf")
         shutil.move(pdf_path, config.characters_output_dir / pdf_path.name)
+        remove_blank_page(config.characters_output_dir / pdf_path.name)
     finally:
         os.remove(character_path)
         os.remove(character_path.with_suffix(".aux"))

@@ -25,7 +25,9 @@ def update_prototype(
     )
     prototype = prototype.replace("Adopted", character_full.background)
     prototype = prototype.replace("Triton", character_full.sub_race)
-    prototype = prototype.replace("Neutral good", character_full.alignment)
+    prototype = prototype.replace(
+        "Neutral good", character_full.alignment.replace("_", " ").capitalize()
+    )
 
     prototype = prototype.replace(
         "StrengthScore{9",
@@ -125,32 +127,32 @@ def update_prototype(
     prototype = prototype.replace(
         "SetStrengthProficiency{0",
         "SetStrengthProficiency{"
-        + str(Statistic.STRENGTH in character_wrapper.saving_throws),
+        + str(int(Statistic.STRENGTH in character_wrapper.saving_throws)),
     )
     prototype = prototype.replace(
         "SetDexterityProficiency{0",
         "SetDexterityProficiency{"
-        + str(Statistic.DEXTERITY in character_wrapper.saving_throws),
+        + str(int(Statistic.DEXTERITY in character_wrapper.saving_throws)),
     )
     prototype = prototype.replace(
         "SetConstitutionProficiency{1",
         "SetConstitutionProficiency{"
-        + str(Statistic.CONSTITUTION in character_wrapper.saving_throws),
+        + str(int(Statistic.CONSTITUTION in character_wrapper.saving_throws)),
     )
     prototype = prototype.replace(
         "SetIntelligenceProficiency{0",
         "SetIntelligenceProficiency{"
-        + str(Statistic.INTELLIGENCE in character_wrapper.saving_throws),
+        + str(int(Statistic.INTELLIGENCE in character_wrapper.saving_throws)),
     )
     prototype = prototype.replace(
         "SetWisdomProficiency{0",
         "SetWisdomProficiency{"
-        + str(Statistic.WISDOM in character_wrapper.saving_throws),
+        + str(int(Statistic.WISDOM in character_wrapper.saving_throws)),
     )
     prototype = prototype.replace(
         "SetCharismaProficiency{1",
         "SetCharismaProficiency{"
-        + str(Statistic.CHARISMA in character_wrapper.saving_throws),
+        + str(int(Statistic.CHARISMA in character_wrapper.saving_throws)),
     )
 
     prototype = prototype.replace(
@@ -177,17 +179,18 @@ def update_prototype(
     )
     prototype = prototype.replace(
         "MaxHitDice{2d6",
-        "MaxHitDice{" + f"{character_full.level}d{character_full.hit_die}",
+        "MaxHitDice{" + f"{character_full.level}d{character_wrapper.hit_die}",
     )
     prototype = prototype.replace(
         "CurrentHitDice{",
-        "CurrentHitDice{" + f"{character_full.level}d{character_full.hit_die}",
+        "CurrentHitDice{"
+        + f"{character_full.level}d{character_wrapper.hit_die}",
     )
 
     prototype = prototype.replace(
-        "AddWeapon{Dagger}{+4}{1d4+2/p}",
+        r"\AddWeapon{Dagger}{+4}{1d4+2/p}",
         "\n".join(
-            "AddWeapon{" + weapon.name + "}{}{}"
+            r"\AddWeapon{" + weapon.name + "}{}{}"
             for weapon in character_wrapper.weapons
         ),
     )

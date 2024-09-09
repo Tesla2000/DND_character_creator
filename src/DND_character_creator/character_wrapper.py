@@ -219,7 +219,7 @@ class CharacterWrapper:
 
     @property
     def modifiers(self) -> dict[Statistic, int]:
-        return {key: value - 10 // 2 for key, value in self.attributes.items()}
+        return {key: value // 2 - 5 for key, value in self.attributes.items()}
 
     @property
     def saving_throw_modifiers(self) -> dict[Statistic, int]:
@@ -280,7 +280,6 @@ class CharacterWrapper:
                 continue
             character_gold -= weapon.cost
             self._equipment.append(weapon)
-        self._equipment = [item.name for item in self._equipment]
         return self._equipment
 
     @property
@@ -296,8 +295,8 @@ class CharacterWrapper:
         return self.weapons
 
     @property
-    def additional_attack(self) -> list[Weapon]:
-        return list(filter(Weapon.__instancecheck__, self.equipment))
+    def additional_attack(self) -> list[str]:
+        return []
 
     @property
     def languages(self) -> list[Language]:
@@ -510,7 +509,9 @@ class CharacterWrapper:
 
     @property
     def ac(self):
-        armor = next(filter(Armor.__instancecheck__, self.equipment))
+        armor = next(
+            filter(Armor.__instancecheck__, self.equipment), armor_list[0]
+        )
         bonus = self.attributes[Statistic.DEXTERITY] // 2 - 5
         if armor.category == ArmorCategory.HEAVY:
             bonus = 0
