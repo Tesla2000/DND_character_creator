@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 from enum import Enum
+from functools import partial
 from itertools import chain
 from itertools import islice
 from itertools import repeat
 from operator import attrgetter
+from typing import Callable
 from typing import Optional
 from typing import Sequence
 from typing import TYPE_CHECKING
@@ -14,6 +16,7 @@ from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel
 from pydantic import create_model
 
+from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
 from src.DND_character_creator.choices.language import Language
 from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (  # noqa: E501
     main_class2spell_slots,
@@ -32,7 +35,7 @@ from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import 
     BattleManeuver,
 )  # noqa: E501
 from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import (  # noqa: E501
-    maneuver_descriptions,
+    maneuver2ability,
 )  # noqa: E501
 from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import (  # noqa: E501
     get_n_maneuvers,
@@ -53,7 +56,7 @@ from src.DND_character_creator.choices.feat_creation.ability_score_improvements 
     main_class2ability_score_improvements,
 )
 from src.DND_character_creator.choices.fighting_styles.fighting_styles import (
-    fighting_style_descriptions,
+    fighting_style2ability,
 )  # noqa: E501
 from src.DND_character_creator.choices.fighting_styles.fighting_styles import (
     FightingStyle,
@@ -348,7 +351,7 @@ class CharacterWrapper:
         return self._saving_throws
 
     @property
-    def battle_maneuvers(self) -> dict[BattleManeuver, str]:
+    def battle_maneuvers(self) -> dict[BattleManeuver, AbilityTemplate]:
         if self._battle_maneuvers:
             return self._battle_maneuvers
         n_maneuvers = get_n_maneuvers(self)
@@ -376,7 +379,7 @@ class CharacterWrapper:
             )
         )
         self._battle_maneuvers = {
-            maneuver: maneuver_descriptions[maneuver]
+            maneuver: maneuver2ability[maneuver]
             for maneuver in picked_maneuvers
         }
         return self._battle_maneuvers
@@ -433,7 +436,7 @@ class CharacterWrapper:
         return self._eldritch_invocations
 
     @property
-    def fighting_styles(self) -> dict[FightingStyle, str]:
+    def fighting_styles(self) -> dict[FightingStyle, AbilityTemplate]:
         if self._fighting_styles:
             return self._fighting_styles
         n_styles = n_fighting_styles(self)
@@ -460,54 +463,49 @@ class CharacterWrapper:
             )
         )
         self._fighting_styles = {
-            style: fighting_style_descriptions[style]
-            for style in picked_styles
+            style: fighting_style2ability[style]
+            for style in (
+                [picked_styles]
+                if isinstance(picked_styles, FightingStyle)
+                else picked_styles
+            )
         }
         return self._fighting_styles
 
     @property
-    def combat_abilities(self) -> list[str]:
-        abilities = []
-        for feat in self.feats:
-            ability = self._feat2feat_template(feat).ability
-            if self._ability_valid(ability):
-                abilities.append(ability.description)
-        for ability_name in self._race_stats.other_active_abilities:
-            ability_name = ability_name.split(":")[0]
-            ability = AbilityTemplate(
-                **json.loads(
-                    self.config.race_abilities_root.joinpath(
-                        self.character.main_race.value
-                    )
-                    .joinpath(f"{ability_name}.json")
-                    .read_text()
-                )
-            )
-            if self._ability_valid(ability):
-                abilities.append(ability.description)
-        for (
-            main_class_ability_path
-        ) in self.config.main_class_abilities_root.joinpath(
-            self.character.main_class
-        ).iterdir():
-            ability = AbilityTemplate(
-                **json.loads(main_class_ability_path.read_text())
-            )
-            if self._ability_valid(ability):
-                abilities.append(ability.description)
-        for sub_class_ability_path in (
-            self.config.sub_class_abilities_root.joinpath(
-                self.character.main_class
-            )
-            .joinpath(self.character.sub_class)
-            .iterdir()
-        ):
-            ability = AbilityTemplate(
-                **json.loads(sub_class_ability_path.read_text())
-            )
-            if self._ability_valid(ability):
-                abilities.append(ability.description)
-        return abilities
+    def action_abilities(self) -> list[str]:
+        check_valid = partial(
+            self._ability_valid, type_checker=AbilityType.ACTION.__eq__
+        )
+        return self._get_abilities(check_valid)
+
+    @property
+    def bonus_action_abilities(self) -> list[str]:
+        check_valid = partial(
+            self._ability_valid, type_checker=AbilityType.BONUS_ACTION.__eq__
+        )
+        return self._get_abilities(check_valid)
+
+    @property
+    def reaction_abilities(self) -> list[str]:
+        check_valid = partial(
+            self._ability_valid, type_checker=AbilityType.REACTION.__eq__
+        )
+        return self._get_abilities(check_valid)
+
+    @property
+    def free_action_abilities(self) -> list[str]:
+        check_valid = partial(
+            self._ability_valid, type_checker=AbilityType.FREE_ACTION.__eq__
+        )
+        return self._get_abilities(check_valid)
+
+    @property
+    def passive_abilities(self) -> list[str]:
+        check_valid = partial(
+            self._ability_valid, type_checker=AbilityType.PASSIVE.__eq__
+        )
+        return self._get_abilities(check_valid)
 
     @property
     def ac(self):
@@ -519,7 +517,11 @@ class CharacterWrapper:
             bonus = 0
         if armor.category == ArmorCategory.MEDIUM:
             bonus = min(2, bonus)
-        return armor.base_ac + bonus + 2 * self.character.uses_shield
+        defense = int(
+            armor.category != ArmorCategory.NONE
+            and FightingStyle.DEFENSE in self.fighting_styles
+        )
+        return armor.base_ac + bonus + 2 * self.character.uses_shield + defense
 
     def _feat2feat_template(self, feat: Feat) -> FeatTemplate:
         return FeatTemplate(
@@ -571,9 +573,68 @@ class CharacterWrapper:
             attributes_in_order = attributes_in_order[1:]
         return attributes_in_order
 
-    def _ability_valid(self, ability: AbilityTemplate) -> bool:
+    def _ability_valid(
+        self,
+        ability: AbilityTemplate,
+        type_checker: Callable[[AbilityType], bool],
+    ) -> bool:
         return (
             ability
+            and type_checker(ability.ability_type)
             and ability.combat_related
             and ability.required_level <= self.character.level
         )
+
+    def _get_abilities(
+        self, check_valid: Callable[[AbilityTemplate], bool]
+    ) -> list[str]:
+        abilities = []
+        for feat in self.feats:
+            ability = self._feat2feat_template(feat).ability
+            if check_valid(ability):
+                abilities.append(ability.description)
+        for ability_name in self._race_stats.other_active_abilities:
+            ability_name = ability_name.split(":")[0]
+            ability = AbilityTemplate(
+                **json.loads(
+                    self.config.race_abilities_root.joinpath(
+                        self.character.main_race.value
+                    )
+                    .joinpath(f"{ability_name}.json")
+                    .read_text()
+                )
+            )
+            if check_valid(ability):
+                abilities.append(ability.description)
+        for (
+            main_class_ability_path
+        ) in self.config.main_class_abilities_root.joinpath(
+            self.character.main_class
+        ).iterdir():
+            ability = AbilityTemplate(
+                **json.loads(main_class_ability_path.read_text())
+            )
+            if check_valid(ability):
+                abilities.append(ability.description)
+        for sub_class_ability_path in (
+            self.config.sub_class_abilities_root.joinpath(
+                self.character.main_class
+            )
+            .joinpath(self.character.sub_class)
+            .iterdir()
+        ):
+            ability = AbilityTemplate(
+                **json.loads(sub_class_ability_path.read_text())
+            )
+            if check_valid(ability):
+                abilities.append(ability.description)
+        for maneuver in self.battle_maneuvers.values():
+            if check_valid(maneuver):
+                abilities.append(maneuver.description)
+        for fighting_style in self.fighting_styles.values():
+            if check_valid(fighting_style):
+                abilities.append(fighting_style.description)
+        return abilities
+
+    def is_proficient_with(self, weapon: Weapon) -> bool:
+        return True

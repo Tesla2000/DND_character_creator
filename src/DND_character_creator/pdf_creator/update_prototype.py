@@ -190,12 +190,18 @@ def update_prototype(
     prototype = prototype.replace(
         r"\AddWeapon{Dagger}{+4}{1d4+2/p}",
         "\n".join(
-            r"\AddWeapon{" + weapon.name + "}{}{}"
+            r"\AddWeapon{"
+            + weapon.name
+            + "}{"
+            + str(weapon.get_attack_bonus(character_wrapper))
+            + "}{"
+            + weapon.get_damage(character_wrapper)
+            + "}"
             for weapon in character_wrapper.weapons
         ),
     )
     prototype = prototype.replace(
-        "AttacksAdditional{",
+        "AttacksAdditional{\n\\textbf{Guiding Bolt}: att. +4, dmg 4d6/r",
         "AttacksAdditional{"
         + "".join(
             "\n" r"\textbf{" + str(additional_attack)
@@ -274,14 +280,61 @@ def update_prototype(
     )
     prototype = prototype.replace(
         "AdditionalFeaturesAndTraits{",
-        "AdditionalFeaturesAndTraits{\n"
-        + "\n".join(character_wrapper.combat_abilities),
+        "AdditionalFeaturesAndTraits{"
+        + (
+            (
+                "\\\\Action\\\\"
+                + "\\\\".join(character_wrapper.action_abilities)
+            )
+            if character_wrapper.action_abilities
+            else ""
+        )
+        + (
+            (
+                "\\\\\\\\Bonus Action\\\\"
+                + "\\\\".join(character_wrapper.bonus_action_abilities)
+            )
+            if character_wrapper.bonus_action_abilities
+            else ""
+        )
+        + (
+            (
+                "\\\\\\\\Reaction\\\\"
+                + "\\\\".join(character_wrapper.reaction_abilities)
+            )
+            if character_wrapper.reaction_abilities
+            else ""
+        )
+        + (
+            (
+                "\\\\\\\\Free Action\\\\"
+                + "\\\\".join(character_wrapper.free_action_abilities)
+            )
+            if character_wrapper.free_action_abilities
+            else ""
+        )
+        + (
+            (
+                "\\\\\\\\Passive\\\\"
+                + "\\\\".join(character_wrapper.passive_abilities)
+            )
+            if character_wrapper.passive_abilities
+            else ""
+        ),
     )
     prototype = prototype.replace(
         "Characterbackground{",
         "Characterbackground{\n" + character_full.backstory,
     )
 
+    prototype = prototype.replace(
+        "SpellcastingAbility{CHA",
+        "SpellcastingAbility{"
+        + str(
+            character_wrapper.spellcasting_ability
+            and character_wrapper.spellcasting_ability.value
+        ),
+    )
     prototype = prototype.replace(
         "SpellSaveDC{13", "SpellSaveDC{" + str(character_wrapper.spellsave_dc)
     )

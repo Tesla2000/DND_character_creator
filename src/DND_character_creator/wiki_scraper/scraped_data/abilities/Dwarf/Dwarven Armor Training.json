@@ -1,7 +1,7 @@
 {
   "name": "Dwarven Armor Training",
   "ability_type": "passive",
-  "combat_related": true,
+  "combat_related": false,
   "spell_grant": false,
   "description": "You have proficiency with light and medium armor.",
   "required_level": 0

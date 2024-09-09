@@ -1,10 +1,15 @@
 # flake8: noqa E501
 from __future__ import annotations
 
-from langchain_openai import ChatOpenAI
-
 from src.DND_character_creator.character_full import CharacterFull
 from src.DND_character_creator.character_wrapper import CharacterWrapper
+from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
+from src.DND_character_creator.choices.battle_maneuvers.battle_maneuvers import (  # noqa: E501
+    BattleManeuver,
+)
+from src.DND_character_creator.choices.fighting_styles.fighting_styles import (
+    FightingStyle,
+)
 from src.DND_character_creator.choices.stats_creation.statistic import (
     Statistic,
 )
@@ -13,12 +18,15 @@ from src.DND_character_creator.config import create_config_with_args
 from src.DND_character_creator.config import parse_arguments
 from src.DND_character_creator.feats import Feat
 from src.DND_character_creator.pdf_creator.create_pdf import create_pdf
+from src.DND_character_creator.wiki_scraper.AbilityTemplate import (
+    AbilityTemplate,
+)
 
 
 def test():
     args = parse_arguments(Config)
     config = create_config_with_args(Config, args)
-    llm = ChatOpenAI(model=config.llm)
+    llm = None
     character_full = CharacterFull(
         **{
             "sex": "male",
@@ -72,6 +80,42 @@ def test():
                 Statistic("wisdom"): 12,
             },
             "_feats": [Feat("Tough")],
+            "_fighting_styles": {
+                FightingStyle("Defense"): AbilityTemplate(
+                    name="",
+                    ability_type=AbilityType("passive"),
+                    combat_related=True,
+                    spell_grant=False,
+                    description="While you are wearing armor, you gain a +1 bonus to AC.",
+                    required_level=0,
+                )
+            },
+            "_battle_maneuvers": {
+                BattleManeuver("Brace"): AbilityTemplate(
+                    name="",
+                    ability_type=AbilityType("free_action"),
+                    combat_related=True,
+                    spell_grant=False,
+                    description="When a creature you can see moves into the reach you have with the melee weapon you're wielding, you can use your reaction to expend one superiority die and make one attack against the creature, using that weapon. If the attack hits, add the superiority die to the weapon's damage roll.",
+                    required_level=0,
+                ),
+                BattleManeuver("Commander's Strike"): AbilityTemplate(
+                    name="",
+                    ability_type=AbilityType("bonus_action"),
+                    combat_related=True,
+                    spell_grant=False,
+                    description="When you take the Attack action on your turn, you can forgo one of your attacks and use a bonus action to direct one of your companions to strike. When you do so, choose a friendly creature who can see or hear you and expend one superiority die. That creature can immediately use its reaction to make one weapon attack, adding the superiority die to the attack's damage roll.",
+                    required_level=0,
+                ),
+                BattleManeuver("Parry"): AbilityTemplate(
+                    name="",
+                    ability_type=AbilityType("reaction"),
+                    combat_related=True,
+                    spell_grant=False,
+                    description="When another creature damages you with a melee attack, you can use your reaction and expend one superiority die to reduce the damage by the number you roll on your superiority die + your Dexterity modifier.",
+                    required_level=0,
+                ),
+            },
         }
     )
     create_pdf(character_wrapped, character_full, config)

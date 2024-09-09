@@ -9,7 +9,7 @@ from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
 
 
 class AbilityTemplate(BaseModel):
-    name: str
+    name: str = ""
     ability_type: AbilityType = Field(
         description="Free action if not provided."
     )
@@ -17,14 +17,16 @@ class AbilityTemplate(BaseModel):
         description="Does this ability posses utility in combat. Mostly yes, "
         "the exceptions are improvements to skills parameters, "
         "and abilities such as trans or increased carrying "
-        "capacity. Examples pack tactics, sunlite sensitivity."
+        "capacity. Examples pack tactics, sunlite sensitivity.",
+        default=True,
     )
     spell_grant: bool = Field(
-        description="This ability allows of a use of a spell"
+        description="This ability allows of a use of a spell", default=False
     )
     description: str
     required_level: int = Field(
-        description="If more than one value is provided pick the lowest."
+        description="If more than one value is provided pick the lowest.",
+        default=0,
     )
 
     def __init__(self, /, **data: Any):
