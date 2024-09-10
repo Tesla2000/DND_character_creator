@@ -8,17 +8,10 @@ from bs4 import BeautifulSoup
 from src.DND_character_creator.choices.class_creation.character_class import (
     MainClass,
 )
-from src.DND_character_creator.choices.spell_slots.spell_slots import Cantrip
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
-    FirstLevel,
-)  # noqa: E501
-from src.DND_character_creator.choices.spell_slots.spell_slots import (
-    SecondLevel,
-)  # noqa: E501
+    all_spells,
+)
 from src.DND_character_creator.choices.spell_slots.spell_slots import Spell
-from src.DND_character_creator.choices.spell_slots.spell_slots import (
-    ThirdLevel,
-)  # noqa: E501
 
 url = "https://dnd5e.wikidot.com/spell:{}"
 
@@ -51,7 +44,7 @@ def scraper_wiki_spell(spell: Spell, output_dir: Path):
 
 
 if __name__ == "__main__":
-    for spell_list in (Cantrip, FirstLevel, SecondLevel, ThirdLevel):
+    for spell_list in all_spells:
         for spell in spell_list:
             out_path = Path(
                 f"scraped_data/spells/{spell_list.__name__.lower()}"

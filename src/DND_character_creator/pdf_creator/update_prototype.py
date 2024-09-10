@@ -260,7 +260,7 @@ def update_prototype(
 
     prototype = prototype.replace("Age{21", "Age{" + str(character_full.age))
     prototype = prototype.replace(
-        "Height{1,60m}", "Height{" + str(character_full.height) + "m}"
+        "Height{1,60m}", "Height{" + str(character_full.height) + " cm}"
     )
     prototype = prototype.replace(
         "Weight{98 lbs}", "Weight{" + str(character_full.weight) + " kg}"

@@ -26,8 +26,14 @@ from .choices.race_creation.sub_race_sources import DNDResource
 from .choices.race_creation.sub_races import get_sub_races
 from .choices.sex import Sex
 from .choices.spell_slots.spell_slots import Cantrip
+from .choices.spell_slots.spell_slots import EighthLevel
+from .choices.spell_slots.spell_slots import FifthLevel
 from .choices.spell_slots.spell_slots import FirstLevel
+from .choices.spell_slots.spell_slots import FourthLevel
+from .choices.spell_slots.spell_slots import NinthLevel
 from .choices.spell_slots.spell_slots import SecondLevel
+from .choices.spell_slots.spell_slots import SeventhLevel
+from .choices.spell_slots.spell_slots import SixthLevel
 from .choices.spell_slots.spell_slots import ThirdLevel
 from .choices.stats_creation.statistic import Statistic
 from .choices.stats_creation.stats_creation_method import StatsCreationMethod
@@ -53,8 +59,8 @@ class Config(BaseModel):
     sub_class_abilities_root: Path = scraped_path / "sub_class_abilities"
 
     pos_args: list[str] = Field(default_factory=list)
-    level: Optional[PositiveInt] = None
-    main_class: Optional[MainClass] = None
+    level: Optional[PositiveInt] = 18
+    main_class: Optional[MainClass] = MainClass.DRUID
     base_description: str = "NPC focused on tanking in heavy armor."
     full_description: str = base_description
     stats_creation_method: StatsCreationMethod = (
@@ -92,9 +98,15 @@ class Config(BaseModel):
     first_level_spells: Optional[list[FirstLevel]] = None
     second_level_spells: Optional[list[SecondLevel]] = None
     third_level_spells: Optional[list[ThirdLevel]] = None
+    fourth_level_spells: Optional[list[FourthLevel]] = None
+    fifth_level_spells: Optional[list[FifthLevel]] = None
+    sixth_level_spells: Optional[list[SixthLevel]] = None
+    seventh_level_spells: Optional[list[SeventhLevel]] = None
+    eighth_level_spells: Optional[list[EighthLevel]] = None
+    ninth_level_spells: Optional[list[NinthLevel]] = None
     feats: Optional[list[Feat]] = None
-    sub_race: Optional[str] = None
-    sub_class: Optional[str] = None
+    sub_race: Optional[str] = None  # volos lizardfolk
+    sub_class: Optional[str] = "Circle of the Land"
     character_traits: Optional[str] = None
     ideals: Optional[str] = None
     bonds: Optional[str] = None

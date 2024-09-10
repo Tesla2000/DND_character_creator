@@ -33,7 +33,16 @@ from src.DND_character_creator.choices.spell_slots.max_spell_levels import (  # 
 from src.DND_character_creator.choices.spell_slots.max_spell_levels import (  # noqa: E501
     half_caster_max_spell_level,
 )  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.spell_slots import (
+    all_spells,
+)  # noqa: E501
 from src.DND_character_creator.choices.spell_slots.spell_slots import Cantrip
+from src.DND_character_creator.choices.spell_slots.spell_slots import (
+    EighthLevel,
+)  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.spell_slots import (
+    FifthLevel,
+)  # noqa: E501
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
     filter_accessible,
 )  # noqa: E501
@@ -41,7 +50,19 @@ from src.DND_character_creator.choices.spell_slots.spell_slots import (
     FirstLevel,
 )  # noqa: E501
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
+    FourthLevel,
+)  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.spell_slots import (
+    NinthLevel,
+)  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.spell_slots import (
     SecondLevel,
+)  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.spell_slots import (
+    SeventhLevel,
+)  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.spell_slots import (
+    SixthLevel,
 )  # noqa: E501
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
     ThirdLevel,
@@ -55,6 +76,12 @@ class CharacterFull(CharacterBase):
     first_level_spells: list[FirstLevel] = Field(default_factory=list)
     second_level_spells: list[SecondLevel] = Field(default_factory=list)
     third_level_spells: list[ThirdLevel] = Field(default_factory=list)
+    fourth_level_spells: list[FourthLevel] = Field(default_factory=list)
+    fifth_level_spells: list[FifthLevel] = Field(default_factory=list)
+    sixth_level_spells: list[SixthLevel] = Field(default_factory=list)
+    seventh_level_spells: list[SeventhLevel] = Field(default_factory=list)
+    eight_level_spells: list[EighthLevel] = Field(default_factory=list)
+    ninth_level_spells: list[NinthLevel] = Field(default_factory=list)
     feats: list[Feat]
     sub_race: str
     sub_class: str
@@ -78,6 +105,12 @@ level_names = [
     "first_level_spells",
     "second_level_spells",
     "third_level_spells",
+    "fourth_level_spells",
+    "fifth_level_spells",
+    "sixth_level_spells",
+    "seventh_level_spells",
+    "eight_level_spells",
+    "ninth_level_spells",
 ]
 
 
@@ -109,69 +142,47 @@ def get_full_character_template(
     config: Config,
     character_base: CharacterBase,
 ) -> tuple[Type[BaseModel], dict[str, Any]]:
-    fields_dictionary = dict(
-        cantrips=(
-            list[
-                filter_accessible(Cantrip, character_base.main_class, config)
-            ],
+    fields_dictionary = {
+        key: (
+            filter_accessible(value, character_base.main_class, config),
             Field(description="Not more than 6"),
-        ),
-        first_level_spells=(
-            list[
-                filter_accessible(
-                    FirstLevel, character_base.main_class, config
-                )
-            ],
-            Field(description="Not more than 6"),
-        ),
-        second_level_spells=(
-            list[
-                filter_accessible(
-                    SecondLevel, character_base.main_class, config
-                )
-            ],
-            Field(description="Not more than 4"),
-        ),
-        third_level_spells=(
-            list[
-                filter_accessible(
-                    ThirdLevel, character_base.main_class, config
-                )
-            ],
-            Field(description="Not more than 2"),
-        ),
-        feats=(
-            list[Feat],
-            Field(
-                description="I urge you to consider Ability score "
-                "improvement as they are pretty common however "
-                "if other feats fit better go for it."
+        )
+        for key, value in zip(level_names, all_spells)
+    }
+    fields_dictionary.update(
+        dict(
+            feats=(
+                list[Feat],
+                Field(
+                    description="I urge you to consider Ability score "
+                    "improvement as they are pretty common however "
+                    "if other feats fit better go for it."
+                ),
             ),
-        ),
-        sub_race=(get_sub_races(character_base.main_race, config), ...),
-        sub_class=(subclasses[character_base.main_class], ...),
-        armor=(
-            ArmorName,
-            Field(
-                description="You would typically have clothes for spell "
-                "casters. "
-                "You have a total of 'amount_of_gold_for_equipment' to spend "
-                "for both armor and weapons. Barbarians and Monks usually "
-                "don't use armor either. Shield is not a valid input. Should "
-                "be "
-                "provided in uses_shield field."
+            sub_race=(get_sub_races(character_base.main_race, config), ...),
+            sub_class=(subclasses[character_base.main_class], ...),
+            armor=(
+                ArmorName,
+                Field(
+                    description="You would typically have clothes for spell "
+                    "casters. You have a total of "
+                    "'amount_of_gold_for_equipment' to spend "
+                    "for both armor and weapons. Barbarians and Monks usually "
+                    "don't use armor either. Shield is not a valid input. "
+                    "Should be provided in uses_shield field."
+                ),
             ),
-        ),
-        uses_shield=(bool, ...),
-        weapons=(
-            list[WeaponName],
-            Field(
-                description="You would typically leave it empty for spell "
-                "casters."
-                " You have a total of 'amount_of_gold_for_equipment' to "
-                "spend for both armor and weapons."
+            uses_shield=(bool, ...),
+            weapons=(
+                list[WeaponName],
+                Field(
+                    description="You would typically leave it empty for spell "
+                    "casters."
+                    " You have a total of 'amount_of_gold_for_equipment' to "
+                    "spend for both armor and weapons."
+                ),
             ),
-        ),
+        )
     )
     pre_set_values = {}
     if (
