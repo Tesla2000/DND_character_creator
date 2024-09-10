@@ -17,7 +17,7 @@ url = "https://dnd5e.wikidot.com/spell:{}"
 
 
 def scraper_wiki_spell(spell: Spell, output_dir: Path):
-    spell_name = spell.value.replace("/", "-")
+    spell_name = spell.value.replace("/", "-").replace(":", "")
     spell_path = output_dir.joinpath(spell_name)
     if spell_path.exists():
         return
@@ -25,7 +25,9 @@ def scraper_wiki_spell(spell: Spell, output_dir: Path):
         spell_name.replace(" ", "-")
         .lower()
         .replace("-(ua)", "")
-        .replace("'", "")
+        .replace("-(hb)", "")
+        .replace("'", "-")
+        .replace(":", "")
     )
     response = requests.get(formatted_url)
     if response.status_code != 200:
@@ -44,7 +46,7 @@ def scraper_wiki_spell(spell: Spell, output_dir: Path):
 
 
 if __name__ == "__main__":
-    for spell_list in all_spells:
+    for spell_list in all_spells[4:]:
         for spell in spell_list:
             out_path = Path(
                 f"scraped_data/spells/{spell_list.__name__.lower()}"

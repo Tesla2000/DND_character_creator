@@ -61,7 +61,7 @@ class Config(BaseModel):
     pos_args: list[str] = Field(default_factory=list)
     level: Optional[PositiveInt] = 18
     main_class: Optional[MainClass] = MainClass.DRUID
-    base_description: str = "NPC focused on tanking in heavy armor."
+    base_description: str = "Swamp old man (lizardfolk)."
     full_description: str = base_description
     stats_creation_method: StatsCreationMethod = (
         StatsCreationMethod.STANDARD_ARRAY
@@ -72,7 +72,7 @@ class Config(BaseModel):
     height_prompt: str = "Height in centimeters"
     weight_prompt: str = "Weight in kilograms"
     sex: Optional[Sex] = None
-    backstory: Optional[str] = None
+    backstory: Optional[str] = ""
     age: Optional[PositiveInt] = None
     first_most_important_stat: Optional[Statistic] = None
     second_most_important_stat: Optional[Statistic] = None
@@ -80,7 +80,7 @@ class Config(BaseModel):
     forth_most_important_stat: Optional[Statistic] = None
     fifth_most_important_stat: Optional[Statistic] = None
     sixth_most_important_stat: Optional[Statistic] = None
-    main_race: Optional[MainRace] = None
+    main_race: Optional[MainRace] = MainRace.LIZARDFOLK
     name: Optional[str] = None
     background: Optional[Background] = None
     alignment: Optional[Alignment] = None
