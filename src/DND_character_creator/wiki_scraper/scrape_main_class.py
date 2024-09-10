@@ -33,7 +33,7 @@ def scraper_wiki_class(main_class: MainClass, output_dir: Path, llm):
         + page_struct
     )
     for ability in abilities_result.abilities:
-        ability.name = ability.name.replace("/", "-")
+        ability.name = ability.name.replace("/", "-").replace(":", "")
         ability_path = main_class_path.joinpath(f"{ability.name}.json")
         if ability_path.exists():
             continue
