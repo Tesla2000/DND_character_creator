@@ -1,0 +1,14 @@
+{
+  "obligatory_skills": [],
+  "skills_to_choose_from": [],
+  "n_skills": 2,
+  "tools": [],
+  "armor": [
+    "All Armor",
+    "Shields"
+  ],
+  "weapons": [
+    "Simple Weapon",
+    "Martial Weapon"
+  ]
+}

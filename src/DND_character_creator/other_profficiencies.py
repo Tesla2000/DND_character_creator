@@ -57,7 +57,7 @@ class MusicalInstrument(str, Enum):
 
 class WeaponProficiency(str, Enum):
     SIMPLE_WEAPON = "Simple Weapon"
-    MARTIAL_WEAPON = "Simple Weapon"
+    MARTIAL_WEAPON = "Martial Weapon"
     CLUB = "Club"
     DAGGER = "Dagger"
     GREATCLUB = "Greatclub"
@@ -104,3 +104,4 @@ class ArmorProficiency(Enum):
     HEAVY_ARMOR = "Heavy Armor"
     SHIELDS = "Shields"
     ANY_OF_YOUR_CHOICE = "Any of your choice"
+    ALL_ARMOR = "All Armor"

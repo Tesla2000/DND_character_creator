@@ -24,7 +24,7 @@ class BackgroundTemplate(BaseModel):
         " 'Land vehicles' for example."
     )
     languages: list[Language] = Field(
-        description="Languages gained with backgroud. "
+        description="Languages gained with background. "
         "If 2 or more of your choice place as many values in a "
         "list. For example for 'Two of your choice' it is "
         "['Any of your choice', 'Any of your choice']. "
