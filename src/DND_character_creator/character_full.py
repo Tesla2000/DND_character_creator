@@ -64,6 +64,7 @@ from src.DND_character_creator.choices.spell_slots.spell_slots import (
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
     SixthLevel,
 )  # noqa: E501
+from src.DND_character_creator.choices.spell_slots.spell_slots import Spell
 from src.DND_character_creator.choices.spell_slots.spell_slots import (
     ThirdLevel,
 )  # noqa: E501
@@ -80,7 +81,7 @@ class CharacterFull(CharacterBase):
     fifth_level_spells: list[FifthLevel] = Field(default_factory=list)
     sixth_level_spells: list[SixthLevel] = Field(default_factory=list)
     seventh_level_spells: list[SeventhLevel] = Field(default_factory=list)
-    eight_level_spells: list[EighthLevel] = Field(default_factory=list)
+    eighth_level_spells: list[EighthLevel] = Field(default_factory=list)
     ninth_level_spells: list[NinthLevel] = Field(default_factory=list)
     feats: list[Feat]
     sub_race: str
@@ -99,6 +100,10 @@ class CharacterFull(CharacterBase):
         "spend for both armor and weapons."
     )
 
+    @property
+    def spells_by_level(self) -> list[list[Spell]]:
+        return list(map(self.model_dump().__getitem__, level_names))
+
 
 level_names = [
     "cantrips",
@@ -109,7 +114,7 @@ level_names = [
     "fifth_level_spells",
     "sixth_level_spells",
     "seventh_level_spells",
-    "eight_level_spells",
+    "eighth_level_spells",
     "ninth_level_spells",
 ]
 
@@ -144,7 +149,7 @@ def get_full_character_template(
 ) -> tuple[Type[BaseModel], dict[str, Any]]:
     fields_dictionary = {
         key: (
-            filter_accessible(value, character_base.main_class, config),
+            list[filter_accessible(value, character_base.main_class, config)],
             Field(description="Not more than 6"),
         )
         for key, value in zip(level_names, all_spells)

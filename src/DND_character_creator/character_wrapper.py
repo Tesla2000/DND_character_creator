@@ -4,6 +4,7 @@ import json
 from enum import Enum
 from functools import partial
 from itertools import chain
+from itertools import filterfalse
 from itertools import islice
 from itertools import repeat
 from operator import attrgetter
@@ -18,6 +19,7 @@ from pydantic import create_model
 
 from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
 from src.DND_character_creator.choices.language import Language
+from src.DND_character_creator.choices.race_creation.main_race import MainRace
 from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (  # noqa: E501
     main_class2spell_slots,
 )
@@ -106,7 +108,6 @@ class CharacterWrapper:
         self.llm = llm
         self.config = config
         self.character = character_full
-        self._character_details = None
         self._feats = None
         self._attributes = {}
         self._health = None
@@ -512,16 +513,21 @@ class CharacterWrapper:
         armor = next(
             filter(Armor.__instancecheck__, self.equipment), armor_list[0]
         )
-        bonus = self.attributes[Statistic.DEXTERITY] // 2 - 5
+        modifier = self.attributes[Statistic.DEXTERITY] // 2 - 5
         if armor.category == ArmorCategory.HEAVY:
             bonus = 0
-        if armor.category == ArmorCategory.MEDIUM:
-            bonus = min(2, bonus)
+        elif armor.category == ArmorCategory.MEDIUM:
+            bonus = min(2, modifier)
+        else:
+            bonus = modifier
+        no_abilities = armor.base_ac + bonus
+        if self.character.main_race == MainRace.LIZARDFOLK:
+            no_abilities = max(no_abilities, 13 + modifier)
         defense = int(
             armor.category != ArmorCategory.NONE
             and FightingStyle.DEFENSE in self.fighting_styles
         )
-        return armor.base_ac + bonus + 2 * self.character.uses_shield + defense
+        return no_abilities + 2 * self.character.uses_shield + defense
 
     def _feat2feat_template(self, feat: Feat) -> FeatTemplate:
         return FeatTemplate(
@@ -589,7 +595,9 @@ class CharacterWrapper:
         self, check_valid: Callable[[AbilityTemplate], bool]
     ) -> list[str]:
         abilities = []
-        for feat in self.feats:
+        for feat in filterfalse(
+            Feat.ABILITY_SCORE_IMPROVEMENT.__eq__, self.feats
+        ):
             ability = self._feat2feat_template(feat).ability
             if check_valid(ability):
                 abilities.append(ability.description)

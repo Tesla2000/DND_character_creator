@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import string
+from itertools import filterfalse
 from operator import attrgetter
 
 from more_itertools import roundrobin
@@ -10,6 +11,8 @@ from src.DND_character_creator.character_wrapper import CharacterWrapper
 from src.DND_character_creator.choices.stats_creation.statistic import (
     Statistic,
 )
+from src.DND_character_creator.feats import Feat
+from src.DND_character_creator.LatexString import LatexString
 from src.DND_character_creator.skill_proficiency import Skill
 
 
@@ -17,7 +20,8 @@ def update_prototype(
     character_wrapper: CharacterWrapper,
     character_full: CharacterFull,
     prototype: str,
-):
+) -> str:
+    prototype = LatexString(prototype)
     prototype = prototype.replace("Nende Firiel", character_full.name)
     prototype = prototype.replace(
         "Sorceror 2",
@@ -255,7 +259,12 @@ def update_prototype(
         "FeaturesTraits{",
         "FeaturesTraits{\n"
         r"\textbf{Features} \\"
-        + r"\\".join(f"\n{feat} " for feat in character_wrapper.feats),
+        + r"\\".join(
+            f"\n{feat} "
+            for feat in filterfalse(
+                Feat.ABILITY_SCORE_IMPROVEMENT.__eq__, character_wrapper.feats
+            )
+        ),
     )
 
     prototype = prototype.replace("Age{21", "Age{" + str(character_full.age))
@@ -343,36 +352,46 @@ def update_prototype(
         "SpellAttackBonus{" + str(character_wrapper.spell_attack_bonus),
     )
     enum = (
-        "First",
-        "Second",
-        "Third",
-        "Fourth",
-        "Fifth",
-        "Sixth",
-        "Seventh",
-        "Eight",
-        "Ninth",
+        "CantripSlot",
+        "FirstLevelSpellSlot",
+        "SecondLevelSpellSlot",
+        "ThirdLevelSpellSlot",
+        "FourthLevelSpellSlot",
+        "FifthLevelSpellSlot",
+        "SixthLevelSpellSlot",
+        "SeventhLevelSpellSlot",
+        "EighthLevelSpellSlot",
+        "NinthLevelSpellSlot",
     )
     spell_slots = "\n".join(
-        "\\" + name + "LevelSpellSlotsTotal{" + str(number) + "}"
-        for name, number in zip(enum, character_wrapper.spell_slots)
+        "\\" + name + "sTotal{" + str(number) + "}"
+        for name, number in zip(enum[1:], character_wrapper.spell_slots)
         if number
     )
-    spells = "\n".join(
-        r"\FirstLevelSpellSlot" + letter + "{" + spell + "}"
-        for letter, spell in zip(
-            string.ascii_uppercase, character_full.first_level_spells
+    spells = (
+        rf"\{spell_level}" + letter + "{" + spell + "}"
+        for spell_level, level_spells in zip(
+            enum, character_full.spells_by_level
         )
+        for letter, spell in zip(string.ascii_uppercase, level_spells)
     )
-    spells_prepared = "\n".join(
-        r"\FirstLevelSpellSlot" + letter + "Prepared{True}"
-        for letter, spell in zip(
-            string.ascii_uppercase, character_full.first_level_spells
+    spells_prepared = (
+        rf"\{spell_level}" + letter + "Prepared{True}"
+        for spell_level, level_spells in zip(
+            enum, character_full.spells_by_level
         )
+        for letter, spell in zip(string.ascii_uppercase, level_spells)
     )
     prototype = prototype.replace(
         r"\FirstLevelSpellSlotsTotal{3}",
-        spell_slots + "\n\n" + "\n".join(roundrobin(spells, spells_prepared)),
+        spell_slots
+        + "\n\n"
+        + "\n".join(
+            filter(
+                lambda spell: not ("Cantrip" in spell and "Prepared" in spell),
+                roundrobin(spells, spells_prepared),
+            )
+        ),
     )
 
     return prototype

@@ -6,7 +6,7 @@ class SignedInt:
         self.integer = integer
 
     def __str__(self):
-        return ("+" if self.integer > 0 else "") + str(self.integer)
+        return ("+" if self.integer >= 0 else "") + str(self.integer)
 
     def __repr__(self):
         return self.__str__()
