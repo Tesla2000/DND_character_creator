@@ -376,22 +376,33 @@ def update_prototype(
         for letter, spell in zip(string.ascii_uppercase, level_spells)
     )
     spells_prepared = (
-        rf"\{spell_level}" + letter + "Prepared{True}"
+        rf"\{spell_level}" + letter + "Prepared{False}"
         for spell_level, level_spells in zip(
             enum, character_full.spells_by_level
         )
         for letter, spell in zip(string.ascii_uppercase, level_spells)
     )
+    spells_string = "\n".join(
+        filter(
+            lambda spell: not ("Cantrip" in spell and "Prepared" in spell),
+            roundrobin(spells, spells_prepared),
+        )
+    )
+    prepared_spells = list(
+        spell if isinstance(spell, str) else spell.value
+        for spell in character_wrapper.prepared_spells
+    )
+    prepared_spells_tex = list(
+        spells_string.partition(spell_name)[0].rpartition("\\")[-1][:-1]
+        for spell_name in prepared_spells
+    )
+    for spell in prepared_spells_tex:
+        spells_string = spells_string.replace(
+            f"{spell}Prepared" "{False}", f"{spell}Prepared" "{True}"
+        )
     prototype = prototype.replace(
         r"\FirstLevelSpellSlotsTotal{3}",
-        spell_slots
-        + "\n\n"
-        + "\n".join(
-            filter(
-                lambda spell: not ("Cantrip" in spell and "Prepared" in spell),
-                roundrobin(spells, spells_prepared),
-            )
-        ),
+        spell_slots + "\n\n" + spells_string,
     )
 
     return prototype

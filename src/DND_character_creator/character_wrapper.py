@@ -16,10 +16,12 @@ from typing import TYPE_CHECKING
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel
 from pydantic import create_model
+from pydantic import Field
 
 from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
 from src.DND_character_creator.choices.language import Language
 from src.DND_character_creator.choices.race_creation.main_race import MainRace
+from src.DND_character_creator.choices.spell_slots.spell_slots import Spell
 from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (  # noqa: E501
     main_class2spell_slots,
 )
@@ -119,6 +121,7 @@ class CharacterWrapper:
         self._battle_maneuvers = None
         self._saving_throws = None
         self._equipment = None
+        self._prepared_spells = None
 
     @property
     def health(self) -> int:
@@ -332,9 +335,11 @@ class CharacterWrapper:
     def spell_attack_bonus(self) -> int:
         if self.spellcasting_ability is None:
             return 0
-        return (
-            self.modifiers[self.spellcasting_ability] + self.proficiency_bonus
-        )
+        return self.spellcasting_modifier + self.proficiency_bonus
+
+    @property
+    def spellcasting_modifier(self) -> int:
+        return self.modifiers[self.spellcasting_ability]
 
     @property
     def spell_slots(self) -> tuple[int, ...]:
@@ -646,3 +651,42 @@ class CharacterWrapper:
 
     def is_proficient_with(self, weapon: Weapon) -> bool:
         return True
+
+    @property
+    def n_prepared_spells(self):
+        return bool(self.character.spells_by_level[1]) * (
+            self.character.level + max(0, self.spellcasting_modifier)
+        )
+
+    @property
+    def prepared_spells(self) -> list[Spell]:
+        if self._prepared_spells:
+            return self._prepared_spells
+        if not (n_prepared_spells := self.n_prepared_spells):
+            return []
+        known_spells = chain.from_iterable(self.character.spells_by_level[1:])
+        KnownSpell = Enum(
+            "KnownSpell",
+            {
+                spell.value.upper().replace(" ", "_"): spell.value
+                for spell in known_spells
+            },
+        )
+        prepared_spells = create_model(
+            "PreparedSpells",
+            prepared_spells=(
+                list[KnownSpell],
+                Field(
+                    description="Spells from options "
+                    "for D&D character to have prepared"
+                ),
+            ),
+            __base__=BaseModel,
+        )
+        prepared_spells_llm = self.llm.with_structured_output(prepared_spells)
+        self._prepared_spells = prepared_spells_llm.invoke(
+            f"Given the description of character pick suitable spells he has "
+            f"prepared. Choose exactly {n_prepared_spells}. "
+            f"\n\nDescription:\n\n{self.character.model_dump_json(indent=2)}"
+        ).prepared_spells
+        return self._prepared_spells

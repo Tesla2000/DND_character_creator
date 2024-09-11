@@ -30,7 +30,7 @@ from src.DND_character_creator.skill_proficiency import SkillAndAny
 from src.DND_character_creator.wiki_scraper.MainRaceTemplate import Statistics
 from src.DND_character_creator.wiki_scraper.MainRaceTemplate import (
     SubRaceTemplate,
-)  # noqa: E501
+)
 
 
 def test():
@@ -171,6 +171,31 @@ def test():
                 Statistic.CHARISMA: 8,
             },
             "_health": 147,
+            "_prepared_spells": [
+                "Goodberry",
+                "Cure Wounds",
+                "Entangle",
+                "Detect Magic",
+                "Fog Cloud",
+                "Thunderwave",
+                "Moonbeam",
+                "Healing Spirit",
+                "Pass Without Trace",
+                "Call Lightning",
+                "Conjure Animals",
+                "Plant Growth",
+                "Polymorph",
+                "Guardian of Nature",
+                "Awaken",
+                "Greater Restoration",
+                "Insect Plague",
+                "Tree Stride",
+                "Druid Grove",
+                "Regenerate",
+                "Fire Storm",
+                "Control Weather",
+                "Shapechange",
+            ],
             "_race_stats": SubRaceTemplate(
                 name="Lizardfolk",
                 speed=30,
