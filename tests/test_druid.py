@@ -26,7 +26,7 @@ from src.DND_character_creator.config import create_config_with_args
 from src.DND_character_creator.config import parse_arguments
 from src.DND_character_creator.feats import Feat
 from src.DND_character_creator.pdf_creator.create_pdf import create_pdf
-from src.DND_character_creator.skill_proficiency import SkillAndAny
+from src.DND_character_creator.skill_proficiency import Skill
 from src.DND_character_creator.wiki_scraper.MainRaceTemplate import Statistics
 from src.DND_character_creator.wiki_scraper.MainRaceTemplate import (
     SubRaceTemplate,
@@ -202,11 +202,11 @@ def test():
                 darkvision_range=0,
                 languages=[Language.COMMON, Language.DRACONIC],
                 skill_proficiencies=[
-                    SkillAndAny.ANIMAL_HANDLING,
-                    SkillAndAny.NATURE,
-                    SkillAndAny.PERCEPTION,
-                    SkillAndAny.STEALTH,
-                    SkillAndAny.SURVIVAL,
+                    Skill.ANIMAL_HANDLING,
+                    Skill.NATURE,
+                    Skill.PERCEPTION,
+                    Skill.STEALTH,
+                    Skill.SURVIVAL,
                 ],
                 tool_proficiencies=[],
                 additional_feat=False,

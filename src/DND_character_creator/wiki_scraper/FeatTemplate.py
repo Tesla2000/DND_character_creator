@@ -15,7 +15,7 @@ from src.DND_character_creator.other_profficiencies import GamingSet
 from src.DND_character_creator.other_profficiencies import MusicalInstrument
 from src.DND_character_creator.other_profficiencies import ToolProficiency
 from src.DND_character_creator.other_profficiencies import WeaponProficiency
-from src.DND_character_creator.skill_proficiency import SkillAndAny
+from src.DND_character_creator.skill_proficiency import Skill
 from src.DND_character_creator.wiki_scraper.AbilityTemplate import (
     AbilityTemplate,
 )
@@ -24,8 +24,8 @@ from src.DND_character_creator.wiki_scraper.AbilityTemplate import (
 class FeatTemplate(BaseModel):
     source: Optional[str]
     ability: Optional[AbilityTemplate]
-    skill_proficiency_gain: Optional[SkillAndAny]
-    skill_expertise_gain: Optional[SkillAndAny] = Field(
+    skill_proficiency_gain: Optional[Skill]
+    skill_expertise_gain: Optional[Skill] = Field(
         description="The same as double proficiency."
     )
     tool_proficiency_gain: Optional[ToolProficiency]
@@ -46,7 +46,7 @@ class FeatTemplate(BaseModel):
             )
         )
         if (
-            data["skill_proficiency_gain"] not in SkillAndAny
+            data["skill_proficiency_gain"] not in Skill
             and data["skill_proficiency_gain"] in ToolProficiency
         ):
             data["tool_proficiency_gain"] = data["skill_proficiency_gain"]

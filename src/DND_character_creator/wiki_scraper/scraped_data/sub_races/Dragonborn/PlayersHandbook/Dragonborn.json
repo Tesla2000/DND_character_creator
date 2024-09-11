@@ -7,7 +7,8 @@
     "Draconic"
   ],
   "skill_proficiencies": [],
-  "tool_proficiencies": [],
+"n_skills": 2,
+"tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
     "strength": 2,

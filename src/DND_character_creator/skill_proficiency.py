@@ -26,7 +26,7 @@ class SkillAndAny(str, Enum):
     SLEIGHT_OF_HAND = "Sleight of Hand"
     STEALTH = "Stealth"
     SURVIVAL = "Survival"
-    ANY_OF_YOUR_CHOICE = "Any of your choice"
+    ANY_OF_YOUR_CHOICE = "Any one of your choice"
 
 
 class Skill(str, Enum):

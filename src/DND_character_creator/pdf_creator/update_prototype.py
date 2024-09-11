@@ -163,10 +163,107 @@ def update_prototype(
         r"\Proficiency{2",
         r"\Proficiency{" + str(character_wrapper.proficiency_bonus),
     )
+
+    prototype = prototype.replace(
+        "AcrobaticsSkillModifier{2",
+        "AcrobaticsSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.ACROBATICS]),
+    )
+    prototype = prototype.replace(
+        "AnimalHandlingSkillModifier{0",
+        "AnimalHandlingSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.ANIMAL_HANDLING]),
+    )
+    prototype = prototype.replace(
+        "ArcanaSkillModifier{3",
+        "ArcanaSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.ARCANA]),
+    )
+    prototype = prototype.replace(
+        "AthleticsSkillModifier{-1",
+        "AthleticsSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.ATHLETICS]),
+    )
+    prototype = prototype.replace(
+        "DeceptionSkillModifier{3",
+        "DeceptionSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.DECEPTION]),
+    )
+    prototype = prototype.replace(
+        "HistorySkillModifier{1",
+        "HistorySkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.HISTORY]),
+    )
+    prototype = prototype.replace(
+        "InsightSkillModifier{2",
+        "InsightSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.INSIGHT]),
+    )
+    prototype = prototype.replace(
+        "IntimidationSkillModifier{3",
+        "IntimidationSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.INTIMIDATION]),
+    )
+    prototype = prototype.replace(
+        "InvestigationSkillModifier{3",
+        "InvestigationSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.INVESTIGATION]),
+    )
+    prototype = prototype.replace(
+        "MedicineSkillModifier{0",
+        "MedicineSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.MEDICINE]),
+    )
+    prototype = prototype.replace(
+        "NatureSkillModifier{1",
+        "NatureSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.NATURE]),
+    )
+    prototype = prototype.replace(
+        "PerceptionSkillModifier{0",
+        "PerceptionSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.PERCEPTION]),
+    )
+    prototype = prototype.replace(
+        "PerformanceSkillModifier{3",
+        "PerformanceSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.PERFORMANCE]),
+    )
+    prototype = prototype.replace(
+        "PersuasionSkillModifier{3",
+        "PersuasionSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.PERSUASION]),
+    )
+    prototype = prototype.replace(
+        "ReligionSkillModifier{1",
+        "ReligionSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.RELIGION]),
+    )
+    prototype = prototype.replace(
+        "SleightOfHandSkillModifier{2",
+        "SleightOfHandSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.SLEIGHT_OF_HAND]),
+    )
+    prototype = prototype.replace(
+        "StealthSkillModifier{2",
+        "StealthSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.STEALTH]),
+    )
+    prototype = prototype.replace(
+        "SurvivalSkillModifier{2",
+        "SurvivalSkillModifier{"
+        + str(character_wrapper.skill_modifiers[Skill.SURVIVAL]),
+    )
+
+    for skill in character_wrapper.skill_proficiencies:
+        prototype = prototype.replace(
+            f'Set{skill.value.replace(" ", "")}Proficiency' "{0}",
+            f'Set{skill.value.replace(" ", "")}Proficiency' "{1}",
+        )
+
     prototype = prototype.replace(
         "Perception{10",
-        "Perception{"
-        + str(character_wrapper.skill_modifiers[Skill.PERCEPTION]),
+        "Perception{" + str(character_wrapper.passive_perception),
     )
     prototype = prototype.replace(
         "ArmorClass{12", "ArmorClass{" + str(character_wrapper.ac)

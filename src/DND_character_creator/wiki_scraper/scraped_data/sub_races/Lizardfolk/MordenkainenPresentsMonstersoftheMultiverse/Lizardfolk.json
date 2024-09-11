@@ -8,8 +8,12 @@
   ],
   "skill_proficiencies": [
     "Animal Handling",
-    "Nature"
+    "Nature",
+    "Perception",
+    "Stealth",
+    "Survival"
   ],
+  "n_skills": 2,
   "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {

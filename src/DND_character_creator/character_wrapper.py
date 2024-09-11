@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import random
 from enum import Enum
 from functools import partial
 from itertools import chain
@@ -31,7 +32,6 @@ from src.DND_character_creator.choices.spell_slots.spellcasting_abilities import
 from src.DND_character_creator.other_profficiencies import ToolProficiency
 from src.DND_character_creator.skill_proficiency import Skill
 from src.DND_character_creator.skill_proficiency import skill2ability
-from src.DND_character_creator.skill_proficiency import SkillAndAny
 
 if TYPE_CHECKING:
     from src.DND_character_creator.character_full import CharacterFull
@@ -122,6 +122,7 @@ class CharacterWrapper:
         self._saving_throws = None
         self._equipment = None
         self._prepared_spells = None
+        self._skill_proficiencies = None
 
     @property
     def health(self) -> int:
@@ -139,10 +140,16 @@ class CharacterWrapper:
         return self._health
 
     @property
-    def skill_proficiencies(self) -> list[SkillAndAny]:
-        return sub_race2stats(
+    def skill_proficiencies(self) -> list[Skill]:
+        if self._skill_proficiencies:
+            return self._skill_proficiencies
+        race_stats = sub_race2stats(
             self.character.main_race, self.character.sub_race, self.config
-        ).skill_proficiencies
+        )
+        self._skill_proficiencies = random.choices(
+            race_stats.skill_proficiencies, k=race_stats.n_skills
+        )
+        return self._skill_proficiencies
 
     @property
     def skill_modifiers(self) -> dict[Skill, int]:
@@ -151,6 +158,10 @@ class CharacterWrapper:
             + (skill in self.skill_proficiencies) * self.proficiency_bonus
             for skill in Skill
         }
+
+    @property
+    def passive_perception(self) -> int:
+        return self.skill_modifiers[Skill.PERCEPTION] + 10
 
     @property
     def initiative(self) -> int:
