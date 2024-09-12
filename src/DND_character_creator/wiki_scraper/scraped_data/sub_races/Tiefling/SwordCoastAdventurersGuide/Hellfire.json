@@ -6,12 +6,13 @@
     "Common",
     "Infernal"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Arcana",
     "Intimidation"
   ],
-"n_skills": 2,
-"tool_proficiencies": [],
+  "obligatory_skills": [],
+  "n_skills": 2,
+  "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
     "strength": 0,

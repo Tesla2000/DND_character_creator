@@ -6,7 +6,7 @@
     "Common",
     "Elven"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Perception"
   ],
   "additional_feat": false,

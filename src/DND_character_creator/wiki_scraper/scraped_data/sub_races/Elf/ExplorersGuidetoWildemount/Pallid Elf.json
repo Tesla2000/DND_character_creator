@@ -6,7 +6,7 @@
     "Common",
     "Elvish"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Insight",
     "Investigation"
   ],

@@ -7,13 +7,14 @@
     "Elvish",
     "Giant"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Animal Handling",
     "Nature",
     "Perception"
   ],
-"n_skills": 2,
-"tool_proficiencies": [],
+  "obligatory_skills": [],
+  "n_skills": 2,
+  "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
     "strength": 1,

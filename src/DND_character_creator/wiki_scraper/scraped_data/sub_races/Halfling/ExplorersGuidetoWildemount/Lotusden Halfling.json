@@ -6,7 +6,7 @@
     "Common",
     "Halfling"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Nature",
     "Survival"
   ],

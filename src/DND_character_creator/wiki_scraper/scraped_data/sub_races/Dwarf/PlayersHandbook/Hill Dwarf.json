@@ -6,7 +6,7 @@
     "Common",
     "Dwarvish"
   ],
-  "skill_proficiencies": [],
+  "skills_to_choose_from": [],
   "additional_feat": false,
   "statistics": {
     "strength": 0,

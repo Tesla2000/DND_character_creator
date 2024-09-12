@@ -6,11 +6,11 @@
     "Common",
     "Gnomish"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Arcana",
     "History"
   ],
-  "tool_proficiencies": [
+    "tool_proficiencies": [
     "Calligrapher's supplies"
   ],
   "additional_feat": false,

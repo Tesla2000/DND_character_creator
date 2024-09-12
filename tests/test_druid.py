@@ -17,7 +17,6 @@ from src.DND_character_creator.choices.equipment_creation.weapons import Weapon
 from src.DND_character_creator.choices.equipment_creation.weapons import (
     WeaponName,
 )  # noqa: E501
-from src.DND_character_creator.choices.language import Language
 from src.DND_character_creator.choices.stats_creation.statistic import (
     Statistic,
 )
@@ -27,15 +26,12 @@ from src.DND_character_creator.config import parse_arguments
 from src.DND_character_creator.feats import Feat
 from src.DND_character_creator.pdf_creator.create_pdf import create_pdf
 from src.DND_character_creator.skill_proficiency import Skill
-from src.DND_character_creator.wiki_scraper.MainRaceTemplate import Statistics
-from src.DND_character_creator.wiki_scraper.MainRaceTemplate import (
-    SubRaceTemplate,
-)
 
 
 def test():
     args = parse_arguments(Config)
     config = create_config_with_args(Config, args)
+    # llm = ChatOpenAI(model=config.llm)
     llm = None
     character_full = CharacterFull(
         **{
@@ -196,42 +192,18 @@ def test():
                 "Control Weather",
                 "Shapechange",
             ],
-            "_race_stats": SubRaceTemplate(
-                name="Lizardfolk",
-                speed=30,
-                darkvision_range=0,
-                languages=[Language.COMMON, Language.DRACONIC],
-                skill_proficiencies=[
-                    Skill.ANIMAL_HANDLING,
-                    Skill.NATURE,
-                    Skill.PERCEPTION,
-                    Skill.STEALTH,
-                    Skill.SURVIVAL,
-                ],
-                tool_proficiencies=[],
-                additional_feat=False,
-                statistics=Statistics(
-                    strength=0,
-                    dexterity=0,
-                    constitution=2,
-                    intelligence=0,
-                    wisdom=1,
-                    charisma=0,
-                    any_of_your_choice=0,
-                ),
-                other_active_abilities=[
-                    "Bite",
-                    "Cunning Artisan",
-                    "Hold Breath",
-                    "Hunter's Lore",
-                    "Natural Armor",
-                    "Hungry Jaws",
-                ],
-            ),
             "_eldritch_invocations": None,
             "_fighting_styles": None,
             "_battle_maneuvers": {},
             "_saving_throws": [Statistic.INTELLIGENCE, Statistic.WISDOM],
+            "_skill_proficiencies": [
+                Skill("Religion"),
+                Skill("Perception"),
+                Skill("Medicine"),
+                Skill("Survival"),
+                Skill("Nature"),
+                Skill("Animal Handling"),
+            ],
             "_equipment": [
                 Armor(
                     name="Clothes",

@@ -6,8 +6,8 @@
     "Common",
     "Gnomish"
   ],
-  "skill_proficiencies": [],
-  "tool_proficiencies": [
+  "skills_to_choose_from": [],
+    "tool_proficiencies": [
     "Tinker's tools"
   ],
   "additional_feat": false,

@@ -6,7 +6,7 @@
     "Common",
     "Elven"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Stealth"
   ],
   "additional_feat": false,

@@ -6,11 +6,11 @@
     "Common",
     "Any of your choice"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Performance",
     "Persuasion"
   ],
-  "tool_proficiencies": [
+    "tool_proficiencies": [
     "Any of your choice"
   ],
   "additional_feat": false,

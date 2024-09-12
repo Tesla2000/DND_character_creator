@@ -6,7 +6,7 @@
     "Common",
     "Goblin"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Perception",
     "Survival"
   ],

@@ -6,15 +6,16 @@
     "Common",
     "Any of your choice"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Animal Handling",
     "Nature",
     "Perception",
     "Stealth",
     "Survival"
   ],
+    "obligatory_skills": [],
   "n_skills": 2,
-  "tool_proficiencies": [],
+    "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
     "strength": 0,

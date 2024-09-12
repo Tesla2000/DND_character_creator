@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import random
 from enum import Enum
 from functools import partial
 from itertools import chain
@@ -20,7 +19,13 @@ from pydantic import create_model
 from pydantic import Field
 
 from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
+from src.DND_character_creator.choices.background_creatrion.background2stats import (  # noqa: E501
+    background2stats,
+)
 from src.DND_character_creator.choices.language import Language
+from src.DND_character_creator.choices.main_class.main_class2proficiencies import (  # noqa: E501
+    main_class2proficiencies,
+)
 from src.DND_character_creator.choices.race_creation.main_race import MainRace
 from src.DND_character_creator.choices.spell_slots.spell_slots import Spell
 from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (  # noqa: E501
@@ -32,6 +37,7 @@ from src.DND_character_creator.choices.spell_slots.spellcasting_abilities import
 from src.DND_character_creator.other_profficiencies import ToolProficiency
 from src.DND_character_creator.skill_proficiency import Skill
 from src.DND_character_creator.skill_proficiency import skill2ability
+from src.DND_character_creator.skill_proficiency import SkillAndAny
 
 if TYPE_CHECKING:
     from src.DND_character_creator.character_full import CharacterFull
@@ -80,7 +86,7 @@ from src.DND_character_creator.choices.invocations.eldritch_invocation import (
 from src.DND_character_creator.choices.invocations.eldritch_invocation import (
     n_eldrich_invocations,
 )  # noqa: E501
-from src.DND_character_creator.choices.main_class2saving_throws import (
+from src.DND_character_creator.choices.main_class.main_class2saving_throws import (  # noqa: E501
     main_class2saving_throws,
 )
 from src.DND_character_creator.choices.race_creation.sub_race2attributes import (  # noqa: E501
@@ -143,11 +149,87 @@ class CharacterWrapper:
     def skill_proficiencies(self) -> list[Skill]:
         if self._skill_proficiencies:
             return self._skill_proficiencies
+        skill_proficiencies = set()
         race_stats = sub_race2stats(
             self.character.main_race, self.character.sub_race, self.config
         )
-        self._skill_proficiencies = random.choices(
-            race_stats.skill_proficiencies, k=race_stats.n_skills
+        background_stats = background2stats(
+            self.character.background, self.config
+        )
+        main_class = main_class2proficiencies(
+            self.character.main_class, self.config
+        )
+        skill_proficiencies = skill_proficiencies.union(
+            main_class.obligatory_skills
+        )
+        skill_proficiencies = skill_proficiencies.union(
+            race_stats.obligatory_skills
+        )
+        skill_proficiencies = skill_proficiencies.union(
+            filterfalse(
+                SkillAndAny.ANY_OF_YOUR_CHOICE.__eq__, background_stats.skills
+            )
+        )
+        n_any_choice = sum(
+            map(SkillAndAny.ANY_OF_YOUR_CHOICE.__eq__, background_stats.skills)
+        )
+        race_choice_options = race_stats.skills_to_choose_from
+        n_race_choices = race_stats.n_skills
+        class_choice_options = main_class.skills_to_choose_from
+        n_class_choices = main_class.n_skills
+        other_options = Enum(
+            "OtherOptions",
+            {
+                option.value.upper().replace(" ", ""): option.value
+                for option in Skill
+                if option.value not in skill_proficiencies
+            },
+        )
+        race_options = Enum(
+            "RaceOptions",
+            {
+                option.value.upper().replace(" ", ""): option.value
+                for option in race_choice_options
+                if option.value not in skill_proficiencies
+            },
+        )
+        class_options = Enum(
+            "ClassOptions",
+            {
+                option.value.upper().replace(" ", ""): option.value
+                for option in class_choice_options
+                if option.value not in skill_proficiencies
+            },
+        )
+        skill_choice_model = create_model(
+            "SkillChoice",
+            **{
+                f"race_skill{i + 1}": (race_options, ...)
+                for i in range(n_race_choices)
+            },
+            **{
+                f"class_skill{i + 1}": (class_options, ...)
+                for i in range(n_class_choices)
+            },
+            **{
+                f"other_skill{i + 1}": (other_options, ...)
+                for i in range(n_any_choice)
+            },
+        )
+        skills_llm = self.llm.with_structured_output(skill_choice_model)
+        picked_skills = attrgetter(
+            *tuple(f"race_skill{i + 1}" for i in range(n_race_choices)),
+            *tuple(f"class_skill{i + 1}" for i in range(n_class_choices)),
+            *tuple(f"other_skill{i + 1}" for i in range(n_any_choice)),
+        )(
+            skills_llm.invoke(
+                "Given the description of character pick suitable skills."
+                "\n\nDescription:\n\n"
+                + self.character.model_dump_json(indent=2)
+            )
+        )
+        self._skill_proficiencies = list(
+            skill_proficiencies.union(picked_skills)
         )
         return self._skill_proficiencies
 

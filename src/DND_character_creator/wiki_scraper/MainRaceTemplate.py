@@ -28,10 +28,11 @@ class SubRaceTemplate(BaseModel):
     languages: list[Language] = Field(
         description="List of languages known by this race"
     )
-    skill_proficiencies: list[Skill] = Field(
-        description="List of skill proficiencies. Note Thieves' Cant is a "
-        "language not Skill proficiency and doesn't belong here. "
-        "Neither does Thieves' tools which is a tool proficiency."
+    obligatory_skills: list[Skill] = Field(
+        description="A list of skills always provided by race."
+    )
+    skills_to_choose_from: list[Skill] = Field(
+        description="A list of skills from which skills can be chosen."
     )
     n_skills: int = Field("Number of skills to choose")
     tool_proficiencies: list[ToolProficiency] = Field(

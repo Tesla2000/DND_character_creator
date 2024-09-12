@@ -5,10 +5,10 @@
   "languages": [
     "Common"
   ],
-  "skill_proficiencies": [
+  "skills_to_choose_from": [
     "Any of your choice"
   ],
-  "tool_proficiencies": [
+    "tool_proficiencies": [
     "Any of your choice"
   ],
   "additional_feat": false,
