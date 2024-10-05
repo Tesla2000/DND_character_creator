@@ -61,9 +61,9 @@ class Config(BaseModel):
     sub_class_abilities_root: Path = scraped_path / "sub_class_abilities"
 
     pos_args: list[str] = Field(default_factory=list)
-    level: Optional[PositiveInt] = 18
-    main_class: Optional[MainClass] = MainClass.DRUID
-    base_description: str = "Swamp old man (lizardfolk)."
+    level: Optional[PositiveInt] = 5
+    main_class: Optional[MainClass] = MainClass.WIZARD
+    base_description: str = "Servant of an ancient court"
     full_description: str = base_description
     stats_creation_method: StatsCreationMethod = (
         StatsCreationMethod.STANDARD_ARRAY
@@ -82,7 +82,7 @@ class Config(BaseModel):
     forth_most_important_stat: Optional[Statistic] = None
     fifth_most_important_stat: Optional[Statistic] = None
     sixth_most_important_stat: Optional[Statistic] = None
-    main_race: Optional[MainRace] = MainRace.LIZARDFOLK
+    main_race: Optional[MainRace] = MainRace.HUMAN
     name: Optional[str] = None
     background: Optional[Background] = None
     alignment: Optional[Alignment] = None
@@ -107,8 +107,8 @@ class Config(BaseModel):
     eighth_level_spells: Optional[list[EighthLevel]] = None
     ninth_level_spells: Optional[list[NinthLevel]] = None
     feats: Optional[list[Feat]] = None
-    sub_race: Optional[str] = None  # volos lizardfolk
-    sub_class: Optional[str] = "Circle of the Land"
+    sub_race: Optional[str] = None
+    sub_class: Optional[str] = "School of Evocation"
     character_traits: Optional[str] = None
     ideals: Optional[str] = None
     bonds: Optional[str] = None
@@ -123,11 +123,11 @@ class Config(BaseModel):
         super().__init__(**data)
         if self.sub_race:
             assert (
-                self.race
+                self.main_race
             ), "If sub-race is provided the race must be provided first"
-            assert self.sub_race in get_sub_races(self.race, self), (
+            assert self.sub_race in get_sub_races(self.main_race, self), (
                 f"Sub-race must be in sub-races "
-                f"{get_sub_races(self.race, self)}"
+                f"{get_sub_races(self.main_race, self)}"
             )
         if self.sub_class:
             assert (

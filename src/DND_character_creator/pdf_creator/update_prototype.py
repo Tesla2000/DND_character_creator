@@ -309,17 +309,61 @@ def update_prototype(
             for additional_attack in character_wrapper.additional_attack
         ),
     )
+    value_getter = attrgetter("value")
     prototype = prototype.replace(
-        r"OtherProficienciesLanguages{\textbf{Languages:} Elvish, Common, "
-        "Primordial",
-        r"OtherProficienciesLanguages{\textbf{Languages:} "
-        + ", ".join(character_wrapper.languages),
+        r"\textbf{Languages:}",
+        r"\textbf{Languages:} "
+        + (
+            ", ".join(map(value_getter, character_wrapper.languages)) or "None"
+        ),
     )
     prototype = prototype.replace(
-        r"\textbf{Weapons}: Quarterstaff, Sling, Dart, Dagger, Light Crossbow",
-        r"\textbf{Weapons}: "
-        + ", ".join(
-            map(attrgetter("name"), character_wrapper.weapon_proficiencies)
+        r"\textbf{Weapons:}",
+        r"\textbf{Weapons:} "
+        + (
+            ", ".join(
+                map(value_getter, character_wrapper.weapon_proficiencies)
+            )
+            or "None"
+        ),
+    )
+    prototype = prototype.replace(
+        r"\textbf{Armors:}",
+        r"\textbf{Armors:} "
+        + (
+            ", ".join(map(value_getter, character_wrapper.armor_proficiencies))
+            or "None"
+        ),
+    )
+    prototype = prototype.replace(
+        r"\textbf{Tools:}",
+        r"\textbf{Tools:} "
+        + (
+            ", ".join(map(value_getter, character_wrapper.tool_proficiencies))
+            or "None"
+        ),
+    )
+    prototype = prototype.replace(
+        r"\textbf{GamingSets:}",
+        r"\textbf{GamingSets:} "
+        + (
+            ", ".join(
+                map(value_getter, character_wrapper.gaming_set_proficiencies)
+            )
+            or "None"
+        ),
+    )
+    prototype = prototype.replace(
+        r"\textbf{Instruments:}",
+        r"\textbf{Instruments:} "
+        + (
+            ", ".join(
+                map(
+                    value_getter,
+                    character_wrapper.musical_instrument_proficiencies,
+                )
+            )
+            or "None"
         ),
     )
 
@@ -357,7 +401,7 @@ def update_prototype(
         "FeaturesTraits{\n"
         r"\textbf{Features} \\"
         + r"\\".join(
-            f"\n{feat} "
+            f"\n{feat.value} "
             for feat in filterfalse(
                 Feat.ABILITY_SCORE_IMPROVEMENT.__eq__, character_wrapper.feats
             )

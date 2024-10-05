@@ -16,13 +16,16 @@ from src.DND_character_creator.skill_proficiency import Skill
 
 class MainClassTemplate(BaseModel):
     obligatory_skills: list[Skill] = Field(
-        description="A list of skills provided by class."
+        description="A list of skills provided by class.", default_factory=list
     )
     skills_to_choose_from: list[Skill] = Field(
-        description="A list of skills from which skills can be chosen."
+        description="A list of skills from which skills can be chosen.",
+        default_factory=list,
     )
     n_skills: int = Field(
-        "Number of skills that can be chosen from skills to choose from."
+        description="Number of skills that can be chosen "
+        "from skills to choose from.",
+        default=0,
     )
     tools: list[ToolProficiency | GamingSet | MusicalInstrument] = Field(
         description="Tool proficiencies gained with class. Empty list if None."

@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel
 from pydantic import Field
 
 from src.DND_character_creator.choices.language import Language
+from src.DND_character_creator.other_profficiencies import GamingSet
+from src.DND_character_creator.other_profficiencies import MusicalInstrument
 from src.DND_character_creator.other_profficiencies import ToolProficiency
 from src.DND_character_creator.skill_proficiency import Skill
 
@@ -29,15 +33,17 @@ class SubRaceTemplate(BaseModel):
         description="List of languages known by this race"
     )
     obligatory_skills: list[Skill] = Field(
-        description="A list of skills always provided by race."
+        description="A list of skills always provided by race.",
+        default_factory=list,
     )
     skills_to_choose_from: list[Skill] = Field(
-        description="A list of skills from which skills can be chosen."
+        description="A list of skills from which skills can be chosen.",
+        default_factory=list,
     )
-    n_skills: int = Field("Number of skills to choose")
-    tool_proficiencies: list[ToolProficiency] = Field(
-        description="List of tool proficiencies.", default_factory=list
-    )
+    n_skills: int = Field(description="Number of skills to choose", default=0)
+    tool_proficiencies: list[
+        ToolProficiency | GamingSet | MusicalInstrument
+    ] = Field(description="List of tool proficiencies.", default_factory=list)
     additional_feat: bool = Field(
         "Does sub-race get a feat 'Feat: You gain " "one Feat of your choice.'"
     )
@@ -49,6 +55,15 @@ class SubRaceTemplate(BaseModel):
         "words abilities that influence gameplay not boosts to "
         "statistics, alignment nor proficiencies."
     )
+
+    def __init__(self, /, **data: Any):
+        if "Any of your choice" in data.get("skills_to_choose_from", []):
+            data["skills_to_choose_from"] = list(
+                skill.value
+                for skill in Skill
+                if skill.value not in data.get("obligatory_skills", [])
+            )
+        super().__init__(**data)
 
 
 class MainRaceTemplate(BaseModel):

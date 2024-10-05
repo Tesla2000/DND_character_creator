@@ -1,6 +1,8 @@
 {
   "obligatory_skills": [],
-  "skills_to_choose_from": [],
+  "skills_to_choose_from": [
+    "Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"
+  ],
   "n_skills": 2,
   "tools": [],
   "armor": [],

@@ -98,7 +98,7 @@ class WeaponProficiency(str, Enum):
     ANY_OF_YOUR_CHOICE = "Any of your choice"
 
 
-class ArmorProficiency(Enum):
+class ArmorProficiency(str, Enum):
     LIGHT_ARMOR = "Light Armor"
     MEDIUM_ARMOR = "Medium Armor"
     HEAVY_ARMOR = "Heavy Armor"

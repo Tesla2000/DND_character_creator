@@ -17,6 +17,7 @@ from src.DND_character_creator.choices.equipment_creation.weapons import Weapon
 from src.DND_character_creator.choices.equipment_creation.weapons import (
     WeaponName,
 )  # noqa: E501
+from src.DND_character_creator.choices.language import Language
 from src.DND_character_creator.choices.stats_creation.statistic import (
     Statistic,
 )
@@ -31,6 +32,7 @@ from src.DND_character_creator.skill_proficiency import Skill
 def test():
     args = parse_arguments(Config)
     config = create_config_with_args(Config, args)
+    # from langchain_openai import ChatOpenAI
     # llm = ChatOpenAI(model=config.llm)
     llm = None
     character_full = CharacterFull(
@@ -167,6 +169,12 @@ def test():
                 Statistic.CHARISMA: 8,
             },
             "_health": 147,
+            "_languages": [
+                Language("Draconic"),
+                Language("Lizardfolk"),
+                Language("Common"),
+                Language("Druidic"),
+            ],
             "_prepared_spells": [
                 "Goodberry",
                 "Cure Wounds",

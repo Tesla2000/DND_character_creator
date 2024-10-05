@@ -9,6 +9,7 @@
   "skills_to_choose_from": [
     "Any of your choice"
   ],
+  "n_skills": 1,
   "additional_feat": false,
   "statistics": {
     "strength": 1,

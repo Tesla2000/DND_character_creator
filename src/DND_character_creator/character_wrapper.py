@@ -14,6 +14,7 @@ from typing import Sequence
 from typing import TYPE_CHECKING
 
 from langchain_core.language_models import BaseChatModel
+from more_itertools import always_iterable
 from pydantic import BaseModel
 from pydantic import create_model
 from pydantic import Field
@@ -21,6 +22,9 @@ from pydantic import Field
 from src.DND_character_creator.choices.abilities.AbilityType import AbilityType
 from src.DND_character_creator.choices.background_creatrion.background2stats import (  # noqa: E501
     background2stats,
+)
+from src.DND_character_creator.choices.class_creation.character_class import (
+    MainClass,
 )
 from src.DND_character_creator.choices.language import Language
 from src.DND_character_creator.choices.main_class.main_class2proficiencies import (  # noqa: E501
@@ -34,7 +38,11 @@ from src.DND_character_creator.choices.spell_slots.spell_slots_by_level import (
 from src.DND_character_creator.choices.spell_slots.spellcasting_abilities import (  # noqa: E501
     spellcasting_ability_map,
 )
+from src.DND_character_creator.other_profficiencies import ArmorProficiency
+from src.DND_character_creator.other_profficiencies import GamingSet
+from src.DND_character_creator.other_profficiencies import MusicalInstrument
 from src.DND_character_creator.other_profficiencies import ToolProficiency
+from src.DND_character_creator.other_profficiencies import WeaponProficiency
 from src.DND_character_creator.skill_proficiency import Skill
 from src.DND_character_creator.skill_proficiency import skill2ability
 from src.DND_character_creator.skill_proficiency import SkillAndAny
@@ -129,6 +137,10 @@ class CharacterWrapper:
         self._equipment = None
         self._prepared_spells = None
         self._skill_proficiencies = None
+        self._tool_proficiencies = None
+        self._languages = None
+        self._gaming_set_proficiencies = None
+        self._musical_instrument_proficiencies = None
 
     @property
     def health(self) -> int:
@@ -235,11 +247,283 @@ class CharacterWrapper:
 
     @property
     def skill_modifiers(self) -> dict[Skill, int]:
+        proficiencies = tuple(s.value for s in self.skill_proficiencies)
         return {
             Skill(skill): self.modifiers[skill2ability[skill]]
-            + (skill in self.skill_proficiencies) * self.proficiency_bonus
+            + (skill.value in proficiencies) * self.proficiency_bonus
             for skill in Skill
         }
+
+    @property
+    def weapon_proficiencies(self) -> list[WeaponProficiency]:
+        main_class = main_class2proficiencies(
+            self.character.main_class, self.config
+        )
+        return main_class.weapons
+
+    @property
+    def armor_proficiencies(self) -> list[ArmorProficiency]:
+        main_class = main_class2proficiencies(
+            self.character.main_class, self.config
+        )
+        return main_class.armor
+
+    @property
+    def tool_proficiencies(self) -> list[ToolProficiency]:
+        if self._tool_proficiencies:
+            return self._tool_proficiencies
+        race_stats = sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        )
+        background_stats = background2stats(
+            self.character.background, self.config
+        )
+        main_class = main_class2proficiencies(
+            self.character.main_class, self.config
+        )
+        race_tools_proficiencies = list(
+            filter(ToolProficiency.__instancecheck__, main_class.tools)
+        )
+        background_tools_proficiencies = list(
+            filter(ToolProficiency.__instancecheck__, background_stats.tools)
+        )
+        main_class_tools_proficiencies = list(
+            filter(
+                ToolProficiency.__instancecheck__,
+                race_stats.tool_proficiencies,
+            )
+        )
+        all_proficiencies = (
+            race_tools_proficiencies
+            + background_tools_proficiencies
+            + main_class_tools_proficiencies
+        )
+        obligatory = set(
+            filterfalse(
+                ToolProficiency.ANY_OF_YOUR_CHOICE.__eq__, all_proficiencies
+            )
+        )
+        n_additional = sum(
+            map(ToolProficiency.ANY_OF_YOUR_CHOICE.__eq__, all_proficiencies)
+        )
+        rest = Enum(
+            "ToolProficiency",
+            {
+                tool.value.upper().replace(" ", ""): tool.value
+                for tool in ToolProficiency
+                if tool not in obligatory
+            },
+        )
+        additional = list()
+        if n_additional:
+            field_names = tuple(
+                f"tool_proficiency{i + 1}" for i in range(n_additional)
+            )
+            tool_template = create_model(
+                "ToolProficiencies",
+                **{name: (rest, ...) for name in field_names},
+            )
+            tool_llm = self.llm.with_structured_output(tool_template)
+            additional = attrgetter(*field_names)(
+                tool_llm.invoke(
+                    "Given the description of character pick suitable tool "
+                    "proficiencies.\n\nDescription:\n\n"
+                    + self.character.model_dump_json(indent=2)
+                )
+            )
+        additional = (
+            additional if isinstance(additional, list) else [additional]
+        )
+        self._tool_proficiencies = list(obligatory.union(additional))
+        return self._tool_proficiencies
+
+    @property
+    def gaming_set_proficiencies(self) -> list[GamingSet]:
+        tool_type = GamingSet
+        if self._gaming_set_proficiencies:
+            return self._gaming_set_proficiencies
+        race_stats = sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        )
+        background_stats = background2stats(
+            self.character.background, self.config
+        )
+        main_class = main_class2proficiencies(
+            self.character.main_class, self.config
+        )
+        race_gaming_set_proficiencies = list(
+            filter(tool_type.__instancecheck__, main_class.tools)
+        )
+        background_gaming_set_proficiencies = list(
+            filter(tool_type.__instancecheck__, background_stats.tools)
+        )
+        main_class_gaming_set_proficiencies = list(
+            filter(tool_type.__instancecheck__, race_stats.tool_proficiencies)
+        )
+        all_proficiencies = (
+            race_gaming_set_proficiencies
+            + background_gaming_set_proficiencies
+            + main_class_gaming_set_proficiencies
+        )
+        obligatory = set(
+            filterfalse(tool_type.ANY_OF_YOUR_CHOICE.__eq__, all_proficiencies)
+        )
+        n_additional = sum(
+            map(tool_type.ANY_OF_YOUR_CHOICE.__eq__, all_proficiencies)
+        )
+        rest = Enum(
+            "GamingSetProficiency",
+            {
+                tool.value.upper().replace(" ", ""): tool.value
+                for tool in tool_type
+                if tool not in obligatory
+            },
+        )
+        additional = list()
+        if n_additional:
+            field_names = tuple(
+                f"gaming_set_proficiency{i + 1}" for i in range(n_additional)
+            )
+            tool_template = create_model(
+                "GamingSetProficiencies",
+                **{name: (rest, ...) for name in field_names},
+            )
+            tool_llm = self.llm.with_structured_output(tool_template)
+            additional = attrgetter(*field_names)(
+                tool_llm.invoke(
+                    "Given the description of character pick suitable gaming "
+                    "set proficiencies.\n\nDescription:\n\n"
+                    + self.character.model_dump_json(indent=2)
+                )
+            )
+        additional = (
+            additional if isinstance(additional, list) else [additional]
+        )
+        self._gaming_set_proficiencies = list(obligatory.union(additional))
+        return self._gaming_set_proficiencies
+
+    @property
+    def musical_instrument_proficiencies(self) -> list[MusicalInstrument]:
+        tool_type = MusicalInstrument
+        if self._musical_instrument_proficiencies:
+            return self._musical_instrument_proficiencies
+        race_stats = sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        )
+        background_stats = background2stats(
+            self.character.background, self.config
+        )
+        main_class = main_class2proficiencies(
+            self.character.main_class, self.config
+        )
+        race_musical_instrument_proficiencies = list(
+            filter(tool_type.__instancecheck__, main_class.tools)
+        )
+        background_musical_instrument_proficiencies = list(
+            filter(tool_type.__instancecheck__, background_stats.tools)
+        )
+        main_class_musical_instrument_proficiencies = list(
+            filter(tool_type.__instancecheck__, race_stats.tool_proficiencies)
+        )
+        all_proficiencies = (
+            race_musical_instrument_proficiencies
+            + background_musical_instrument_proficiencies
+            + main_class_musical_instrument_proficiencies
+        )
+        obligatory = set(
+            filterfalse(tool_type.ANY_OF_YOUR_CHOICE.__eq__, all_proficiencies)
+        )
+        n_additional = sum(
+            map(tool_type.ANY_OF_YOUR_CHOICE.__eq__, all_proficiencies)
+        )
+        rest = Enum(
+            "MusicalInstrumentProficiency",
+            {
+                tool.value.upper().replace(" ", ""): tool.value
+                for tool in tool_type
+                if tool not in obligatory
+            },
+        )
+        additional = list()
+        if n_additional:
+            field_names = tuple(
+                f"musical_instrument_proficiency{i + 1}"
+                for i in range(n_additional)
+            )
+            tool_template = create_model(
+                "MusicalInstrumentProficiencies",
+                **{name: (rest, ...) for name in field_names},
+            )
+            tool_llm = self.llm.with_structured_output(tool_template)
+            additional = attrgetter(*field_names)(
+                tool_llm.invoke(
+                    "Given the description of character pick suitable musical "
+                    "instrument proficiencies.\n\nDescription:\n\n"
+                    + self.character.model_dump_json(indent=2)
+                )
+            )
+        additional = (
+            additional if isinstance(additional, list) else [additional]
+        )
+        self._musical_instrument_proficiencies = list(
+            obligatory.union(additional)
+        )
+        return self._musical_instrument_proficiencies
+
+    @property
+    def languages(self) -> list[Language]:
+        if self._languages:
+            return self._languages
+        race_stats = sub_race2stats(
+            self.character.main_race, self.character.sub_race, self.config
+        )
+        background_stats = background2stats(
+            self.character.background, self.config
+        )
+        main_class_languages = {
+            MainClass.DRUID: [Language.DRUIDIC],
+            MainClass.ROGUE: [Language.THIEVES_CANT],
+        }.get(self.character.main_class, [])
+        background_languages = background_stats.languages
+        race_languages = race_stats.languages
+        all_languages = (
+            race_languages + background_languages + main_class_languages
+        )
+        obligatory = set(
+            filterfalse(Language.ANY_OF_YOUR_CHOICE.__eq__, all_languages)
+        )
+        n_additional = sum(
+            map(Language.ANY_OF_YOUR_CHOICE.__eq__, all_languages)
+        )
+        rest = Enum(
+            "Language",
+            {
+                language.value.upper().replace(" ", ""): language.value
+                for language in Language
+                if language not in (*obligatory, Language.ANY_OF_YOUR_CHOICE)
+            },
+        )
+        additional = list()
+        if n_additional:
+            field_names = tuple(
+                f"language{i + 1}" for i in range(n_additional)
+            )
+            language_template = create_model(
+                "Languages", **{name: (rest, ...) for name in field_names}
+            )
+            language_llm = self.llm.with_structured_output(language_template)
+            additional = attrgetter(*field_names)(
+                language_llm.invoke(
+                    "Given the description of character pick suitable know "
+                    f"language. Already known languages are "
+                    f"{', '.join(o.value for o in obligatory)} "
+                    "you are forbidden to pick them.\n\nDescription:\n\n"
+                    + self.character.model_dump_json(indent=2)
+                )
+            )
+        additional = always_iterable(additional)
+        self._languages = list(obligatory.union(additional))
+        return self._languages
 
     @property
     def passive_perception(self) -> int:
@@ -290,9 +574,16 @@ class CharacterWrapper:
             self._attributes[self.character.first_most_important_stat] += 2
             self._attributes[self.character.second_most_important_stat] += 1
         elif race_attributes["any_of_your_choice"]:
-            self._attributes[
-                self.character.first_most_important_stat
-            ] += race_attributes["any_of_your_choice"]
+            order = iter(attributes_in_order)
+            for stat in order:
+                if stat in race_attributes:
+                    continue
+                if race_attributes["any_of_your_choice"] == 2:
+                    self._attributes[stat] += 1
+                    self._attributes[next(order)] += 1
+                else:
+                    self._attributes[stat] += 1
+                break
         for feat in self.feats:
             if feat == Feat.ABILITY_SCORE_IMPROVEMENT:
                 self._improve_from_ability_score(attributes_in_order)
@@ -372,6 +663,12 @@ class CharacterWrapper:
         else:
             character_gold -= armor.cost
             self._equipment = [armor]
+        if (
+            self.character.uses_shield
+            and armor_list[-1].cost <= character_gold
+        ):
+            self._equipment.append(armor_list[-1])
+            character_gold -= armor_list[-1].cost
         for weapon_name in self.character.weapons:
             weapon = next(
                 weapon for weapon in weapon_list if weapon.name == weapon_name
@@ -383,6 +680,10 @@ class CharacterWrapper:
         return self._equipment
 
     @property
+    def uses_shield(self):
+        return self.character.uses_shield and armor_list[-1] in self.equipment
+
+    @property
     def weapons(self) -> list[Weapon]:
         return list(filter(Weapon.__instancecheck__, self.equipment))
 
@@ -391,24 +692,8 @@ class CharacterWrapper:
         return 15 * self.attributes[Statistic.STRENGTH]
 
     @property
-    def weapon_proficiencies(self) -> list[Weapon]:
-        return self.weapons
-
-    @property
     def additional_attack(self) -> list[str]:
         return []
-
-    @property
-    def languages(self) -> list[Language]:
-        return sub_race2stats(
-            self.character.main_race, self.character.sub_race, self.config
-        ).languages
-
-    @property
-    def tool_proficiencies(self) -> list[ToolProficiency]:
-        return sub_race2stats(
-            self.character.main_race, self.character.sub_race, self.config
-        ).tool_proficiencies
 
     @property
     def spellcasting_ability(self) -> Optional[Statistic]:
@@ -625,7 +910,7 @@ class CharacterWrapper:
             armor.category != ArmorCategory.NONE
             and FightingStyle.DEFENSE in self.fighting_styles
         )
-        return no_abilities + 2 * self.character.uses_shield + defense
+        return no_abilities + 2 * self.uses_shield + defense
 
     def _feat2feat_template(self, feat: Feat) -> FeatTemplate:
         return FeatTemplate(

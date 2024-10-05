@@ -7,13 +7,12 @@
     "Elven",
     "Any of your choice"
   ],
-  "skills_to_choose_from": [
-    "Any of your choice"
-  ],
+  "obligatory_skills": [],
+  "skills_to_choose_from": [],
   "additional_feat": false,
   "statistics": {
     "strength": 0,
-    "dexterity": 1,
+    "dexterity": 0,
     "constitution": 0,
     "intelligence": 0,
     "wisdom": 0,

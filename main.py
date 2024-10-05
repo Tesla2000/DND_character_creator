@@ -67,6 +67,7 @@ def main():
         **character_full_template.model_dump(),
         **character_base.model_dump(),
     )
+
     character_wrapped = CharacterWrapper(character_full, config, llm)
     create_pdf(character_wrapped, character_full, config)
 

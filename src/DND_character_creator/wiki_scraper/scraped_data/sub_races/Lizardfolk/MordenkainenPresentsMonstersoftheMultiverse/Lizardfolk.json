@@ -13,9 +13,9 @@
     "Stealth",
     "Survival"
   ],
-    "obligatory_skills": [],
+  "obligatory_skills": [],
   "n_skills": 2,
-    "tool_proficiencies": [],
+  "tool_proficiencies": [],
   "additional_feat": false,
   "statistics": {
     "strength": 0,

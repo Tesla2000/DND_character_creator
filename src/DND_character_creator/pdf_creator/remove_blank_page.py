@@ -12,7 +12,7 @@ def remove_blank_page(pdf_path: Path):
 
         num_pages = len(reader.pages)
 
-        for page_num in range(1, num_pages):
+        for page_num in range(num_pages == 4, num_pages):
             page = reader.pages[page_num]
             writer.add_page(page)
 
