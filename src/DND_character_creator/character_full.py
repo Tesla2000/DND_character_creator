@@ -99,6 +99,10 @@ class CharacterFull(CharacterBase):
         "You have a total of 'amount_of_gold_for_equipment' to "
         "spend for both armor and weapons."
     )
+    other_equipment: list[str] = Field(
+        default_factory=list,
+        description="All alchemical supplies, medicines, potions etc.",
+    )
 
     @property
     def spells_by_level(self) -> list[list[Spell]]:

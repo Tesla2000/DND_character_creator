@@ -1,76 +1,113 @@
 from __future__ import annotations
 
 import json
-from collections import ChainMap
+from operator import attrgetter
+from typing import Type
 
 from langchain_openai import ChatOpenAI
+from pydantic import BaseModel
+from pydantic import create_model
 
-from src.DND_character_creator.character_base import CharacterBase
 from src.DND_character_creator.character_base import (
     get_base_character_template,
 )
-from src.DND_character_creator.character_full import CharacterFull
-from src.DND_character_creator.character_full import (
-    get_full_character_template,
-)  # noqa: E501
-from src.DND_character_creator.character_wrapper import CharacterWrapper
+from src.DND_character_creator.character_details_filler import (
+    CharacterDetailsFiller,
+)
 from src.DND_character_creator.config import Config
 from src.DND_character_creator.config import create_config_with_args
 from src.DND_character_creator.config import parse_arguments
 from src.DND_character_creator.pdf_creator.create_pdf import create_pdf
 
 
-def main():
-    args = parse_arguments(Config)
-    config = create_config_with_args(Config, args)
-    llm = ChatOpenAI(model=config.llm)
-    character_base_template, base_pre_defined_fields = (
-        get_base_character_template(config)
-    )
-    description_base = "Create a D&D e5 " + config.base_description.strip()
-    if base_pre_defined_fields:
-        description_base += (
-            f"\nThe following details about the character are "
-            f"given:\n{json.dumps(base_pre_defined_fields, indent=2)}"
+class Main:
+    def __init__(self):
+        args = parse_arguments(Config)
+        self.config = create_config_with_args(Config, args)
+        self.character_llm = ChatOpenAI(
+            model=self.config.character_llm,
+            temperature=self.config.character_llm_temp,
         )
-    description_base += (
-        "\nBe careful picking size of character some races "
-        "are smaller than others."
-    )
-    base_template = llm.with_structured_output(character_base_template)
-    character_base_template = base_template.invoke(description_base)
-    character_base = CharacterBase(
-        **base_pre_defined_fields, **character_base_template.model_dump()
-    )
-    character_full_template, full_pre_defined_fields = (
-        get_full_character_template(config, character_base)
-    )
-    description_full = config.full_description.strip()
-    pre_defined = json.dumps(
-        dict(
-            **ChainMap(
-                full_pre_defined_fields,
-                json.loads(character_base.model_dump_json()),
+        self.details_llm = ChatOpenAI(
+            model=self.config.details_llm,
+            temperature=self.config.details_llm_temp,
+        )
+
+    def __call__(self):
+        self._get_character_bases()
+        self._fill_character_details()
+        self._generate_pdfs()
+
+    def _get_character_bases(self):
+        character_base_template, self.base_pre_defined_fields = (
+            get_base_character_template(self.config)
+        )
+        if self.config.n_instances == 1:
+            self._generate_character(character_base_template)
+        else:
+            self._generate_characters(character_base_template)
+
+    def _generate_character(self, character_base_template: Type[BaseModel]):
+        description_base = (
+            "Create a D&D e5 " + self.config.base_description.strip()
+        )
+        description_base = self._modify_base(description_base)
+        base_template = self.character_llm.with_structured_output(
+            character_base_template
+        )
+        self.character_base_templates = [
+            base_template.invoke(description_base)
+        ]
+
+    def _generate_characters(self, character_base_template: Type[BaseModel]):
+        description_base = (
+            "Create a D&D e5 characters according to description "
+            + self.config.base_description.strip()
+        )
+        description_base = self._modify_base(description_base)
+        fields = tuple(
+            f"npc_{index + 1}" for index in range(self.config.n_instances)
+        )
+        characters_base_template = create_model(
+            "GroupOfNPCs",
+            **{field: (character_base_template, ...) for field in fields},
+        )
+        base_template = self.character_llm.with_structured_output(
+            characters_base_template
+        )
+        self.character_base_templates = attrgetter(*fields)(
+            base_template.invoke(description_base)
+        )
+
+    def _modify_base(self, description_base: str) -> str:
+        if self.base_pre_defined_fields:
+            description_base += (
+                f"\nThe following details about the character are "
+                f"given:\n{json.dumps(self.base_pre_defined_fields, indent=2)}"
             )
-        ),
-        indent=2,
-    )
-    description_full += (
-        f"\nThe following details about the character are given:\n"
-        f"{pre_defined}"
-    )
-    full_template = llm.with_structured_output(character_full_template)
-    character_full_template = full_template.invoke(description_full)
+        description_base += (
+            "\nBe careful picking size of character some races "
+            "are smaller than others."
+        )
+        return description_base
 
-    character_full = CharacterFull(
-        **full_pre_defined_fields,
-        **character_full_template.model_dump(),
-        **character_base.model_dump(),
-    )
+    def _fill_character_details(self):
+        self.character_wrappers = (
+            CharacterDetailsFiller(
+                character_base_template,
+                self.base_pre_defined_fields,
+                self.config,
+                self.details_llm,
+            ).fill_details()
+            for character_base_template in self.character_base_templates
+        )
 
-    character_wrapped = CharacterWrapper(character_full, config, llm)
-    create_pdf(character_wrapped, character_full, config)
+    def _generate_pdfs(self):
+        tuple(
+            create_pdf(character_wrapper, self.config)
+            for character_wrapper in self.character_wrappers
+        )
 
 
 if __name__ == "__main__":
-    exit(main())
+    exit(Main()())

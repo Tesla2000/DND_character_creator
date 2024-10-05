@@ -16,6 +16,7 @@ langchain-openai = "^0.1.22"
 beautifulsoup4 = "^4.12.3"
 more-itertools = "^10.5.0"
 pypdf2 = "^3.0.1"
+toml = "^0.10.2"
 
 
 [build-system]

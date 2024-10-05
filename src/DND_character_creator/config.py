@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import sys
+from collections import ChainMap
 from pathlib import Path
 from typing import Any
 from typing import Optional
 from typing import Type
 
+import toml
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic import Field
@@ -45,6 +47,7 @@ load_dotenv()
 
 class Config(BaseModel):
     _root: Path = Path(__file__).parent
+    configuration_file: Optional[Path] = None
     characters_output_dir: Path = _root / "characters_output"
 
     pdf_creator: Path = _root / "pdf_creator"
@@ -61,9 +64,10 @@ class Config(BaseModel):
     sub_class_abilities_root: Path = scraped_path / "sub_class_abilities"
 
     pos_args: list[str] = Field(default_factory=list)
-    level: Optional[PositiveInt] = 5
-    main_class: Optional[MainClass] = MainClass.WIZARD
-    base_description: str = "Servant of an ancient court"
+    n_instances: int = 1
+    level: Optional[PositiveInt] = None
+    main_class: Optional[MainClass] = None
+    base_description: str = None
     full_description: str = base_description
     stats_creation_method: StatsCreationMethod = (
         StatsCreationMethod.STANDARD_ARRAY
@@ -74,7 +78,7 @@ class Config(BaseModel):
     height_prompt: str = "Height in centimeters"
     weight_prompt: str = "Weight in kilograms"
     sex: Optional[Sex] = None
-    backstory: Optional[str] = ""
+    backstory: Optional[str] = None
     age: Optional[PositiveInt] = None
     first_most_important_stat: Optional[Statistic] = None
     second_most_important_stat: Optional[Statistic] = None
@@ -82,7 +86,7 @@ class Config(BaseModel):
     forth_most_important_stat: Optional[Statistic] = None
     fifth_most_important_stat: Optional[Statistic] = None
     sixth_most_important_stat: Optional[Statistic] = None
-    main_race: Optional[MainRace] = MainRace.HUMAN
+    main_race: Optional[MainRace] = None
     name: Optional[str] = None
     background: Optional[Background] = None
     alignment: Optional[Alignment] = None
@@ -95,7 +99,10 @@ class Config(BaseModel):
     subclass_sources: list[DNDResource] = Field(
         default_factory=lambda: list(DNDResource)
     )
-    llm: str = "gpt-4o-mini"
+    character_llm: str = "gpt-4o"
+    character_llm_temp: float = 0.5
+    details_llm: str = "gpt-4o-mini"
+    details_llm_temp: float = 0
     cantrips: Optional[list[Cantrip]] = None
     first_level_spells: Optional[list[FirstLevel]] = None
     second_level_spells: Optional[list[SecondLevel]] = None
@@ -108,7 +115,7 @@ class Config(BaseModel):
     ninth_level_spells: Optional[list[NinthLevel]] = None
     feats: Optional[list[Feat]] = None
     sub_race: Optional[str] = None
-    sub_class: Optional[str] = "School of Evocation"
+    sub_class: Optional[str] = None
     character_traits: Optional[str] = None
     ideals: Optional[str] = None
     bonds: Optional[str] = None
@@ -118,8 +125,14 @@ class Config(BaseModel):
     armor: Optional[ArmorName] = None
     uses_shield: Optional[bool] = None
     weapons: Optional[list[WeaponName]] = None
+    other_equipment: Optional[list[str]] = None
 
     def __init__(self, /, **data: Any):
+        if (
+            data.get("full_description") is None
+            and data.get("base_description") is not None
+        ):
+            data["full_description"] = data["base_description"]
         super().__init__(**data)
         if self.sub_race:
             assert (
@@ -159,9 +172,22 @@ def parse_arguments(config_class: Type[Config]):
 
 
 def create_config_with_args(config_class: Type[Config], args) -> Config:
-    config = config_class(
-        **{name: getattr(args, name) for name in config_class.model_fields}
-    )
+    arg_dict = {
+        name: getattr(args, name) for name in config_class.model_fields
+    }
+    if (
+        arg_dict.get("configuration_file")
+        and Path(arg_dict["configuration_file"]).exists()
+    ):
+        config = config_class(
+            **dict(
+                ChainMap(
+                    toml.load(arg_dict.get("configuration_file")), arg_dict
+                )
+            )
+        )
+    else:
+        config = config_class(**arg_dict)
     for variable in config.model_fields:
         value = getattr(config, variable)
         if (

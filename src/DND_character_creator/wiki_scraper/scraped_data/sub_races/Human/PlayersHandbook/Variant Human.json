@@ -19,8 +19,5 @@
     "charisma": 0,
     "any_of_your_choice": 2
   },
-  "other_active_abilities": [
-    "You gain proficiency in one skill of your choice.",
-    "You gain one Feat of your choice."
-  ]
+  "other_active_abilities": []
 }

@@ -218,30 +218,46 @@ class CharacterWrapper:
             **{
                 f"race_skill{i + 1}": (race_options, ...)
                 for i in range(n_race_choices)
+                if len(race_options)
             },
             **{
                 f"class_skill{i + 1}": (class_options, ...)
                 for i in range(n_class_choices)
+                if len(class_options)
             },
             **{
                 f"other_skill{i + 1}": (other_options, ...)
                 for i in range(n_any_choice)
+                if len(other_options)
             },
         )
         skills_llm = self.llm.with_structured_output(skill_choice_model)
         picked_skills = attrgetter(
-            *tuple(f"race_skill{i + 1}" for i in range(n_race_choices)),
-            *tuple(f"class_skill{i + 1}" for i in range(n_class_choices)),
-            *tuple(f"other_skill{i + 1}" for i in range(n_any_choice)),
+            *tuple(
+                f"race_skill{i + 1}"
+                for i in range(n_race_choices)
+                if len(race_options)
+            ),
+            *tuple(
+                f"class_skill{i + 1}"
+                for i in range(n_class_choices)
+                if len(class_options)
+            ),
+            *tuple(
+                f"other_skill{i + 1}"
+                for i in range(n_any_choice)
+                if len(other_options)
+            ),
         )(
             skills_llm.invoke(
                 "Given the description of character pick suitable skills."
-                "\n\nDescription:\n\n"
+                f"WARNING! the flowing skills {skill_proficiencies} are "
+                "already known and can't be chosen!\n\nDescription:\n\n"
                 + self.character.model_dump_json(indent=2)
             )
         )
         self._skill_proficiencies = list(
-            skill_proficiencies.union(picked_skills)
+            skill_proficiencies.union(always_iterable(picked_skills))
         )
         return self._skill_proficiencies
 
@@ -462,11 +478,9 @@ class CharacterWrapper:
                     + self.character.model_dump_json(indent=2)
                 )
             )
-        additional = (
-            additional if isinstance(additional, list) else [additional]
-        )
+
         self._musical_instrument_proficiencies = list(
-            obligatory.union(additional)
+            obligatory.union(always_iterable(additional))
         )
         return self._musical_instrument_proficiencies
 
@@ -495,21 +509,14 @@ class CharacterWrapper:
         n_additional = sum(
             map(Language.ANY_OF_YOUR_CHOICE.__eq__, all_languages)
         )
-        rest = Enum(
-            "Language",
-            {
-                language.value.upper().replace(" ", ""): language.value
-                for language in Language
-                if language not in (*obligatory, Language.ANY_OF_YOUR_CHOICE)
-            },
-        )
+
         additional = list()
         if n_additional:
             field_names = tuple(
                 f"language{i + 1}" for i in range(n_additional)
             )
             language_template = create_model(
-                "Languages", **{name: (rest, ...) for name in field_names}
+                "Languages", **{name: (Language, ...) for name in field_names}
             )
             language_llm = self.llm.with_structured_output(language_template)
             additional = attrgetter(*field_names)(
@@ -717,7 +724,7 @@ class CharacterWrapper:
 
     @property
     def spellcasting_modifier(self) -> int:
-        return self.modifiers[self.spellcasting_ability]
+        return self.modifiers.get(self.spellcasting_ability, 0)
 
     @property
     def spell_slots(self) -> tuple[int, ...]:

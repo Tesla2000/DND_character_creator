@@ -1,6 +1,8 @@
 {
   "obligatory_skills": [],
-  "skills_to_choose_from": [],
+  "skills_to_choose_from": [
+    "Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion"
+  ],
   "n_skills": 2,
   "tools": [],
   "armor": [

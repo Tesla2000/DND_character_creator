@@ -370,7 +370,8 @@ def update_prototype(
     prototype = prototype.replace(
         "Equipment{",
         "Equipment{\n"
-        + ", ".join(map(attrgetter("name"), character_wrapper.equipment)),
+        + ", ".join(map(attrgetter("name"), character_wrapper.equipment))
+        + ", ".join(character_full.other_equipment),
     )
     prototype = prototype.replace(
         "{Weight:} 82.25 lb",

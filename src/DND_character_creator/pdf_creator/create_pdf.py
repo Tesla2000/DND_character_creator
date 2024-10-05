@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import shutil
 
-from src.DND_character_creator.character_full import CharacterFull
 from src.DND_character_creator.character_wrapper import CharacterWrapper
 from src.DND_character_creator.config import Config
 from src.DND_character_creator.pdf_creator.remove_blank_page import (
@@ -17,9 +16,9 @@ from src.DND_character_creator.pdf_creator.update_prototype import (
 
 def create_pdf(
     character_wrapper: CharacterWrapper,
-    character_full: CharacterFull,
     config: Config,
 ):
+    character_full = character_wrapper.character
     prototype = update_prototype(
         character_wrapper, character_full, config.tex_prototype.read_text()
     )
@@ -32,8 +31,10 @@ def create_pdf(
     else:
         pdf_path = character_path.with_suffix(".pdf")
         shutil.move(pdf_path, config.characters_output_dir / pdf_path.name)
+        shutil.move(
+            character_path, config.characters_output_dir / character_path.name
+        )
         remove_blank_page(config.characters_output_dir / pdf_path.name)
     finally:
-        os.remove(character_path)
         os.remove(character_path.with_suffix(".aux"))
         os.remove(character_path.with_suffix(".log"))
