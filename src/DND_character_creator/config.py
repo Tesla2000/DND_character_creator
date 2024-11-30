@@ -16,7 +16,6 @@ from pydantic import PositiveInt
 from .choices.alignment import Alignment
 from .choices.background_creatrion.background import Background
 from .choices.class_creation.character_class import MainClass
-from .choices.class_creation.character_class import subclasses
 from .choices.equipment_creation.armor import ArmorName
 from .choices.equipment_creation.weapons import WeaponName
 from .choices.health_creation.health_creation_method import (
@@ -68,7 +67,6 @@ class Config(BaseModel):
     level: Optional[PositiveInt] = None
     main_class: Optional[MainClass] = None
     base_description: str = None
-    full_description: str = base_description
     stats_creation_method: StatsCreationMethod = (
         StatsCreationMethod.STANDARD_ARRAY
     )
@@ -100,7 +98,7 @@ class Config(BaseModel):
         default_factory=lambda: list(DNDResource)
     )
     character_llm: str = "gpt-4o"
-    character_llm_temp: float = 0.5
+    character_llm_temp: float = 0.7
     details_llm: str = "gpt-4o-mini"
     details_llm_temp: float = 0
     cantrips: Optional[list[Cantrip]] = None
@@ -128,11 +126,6 @@ class Config(BaseModel):
     other_equipment: Optional[list[str]] = None
 
     def __init__(self, /, **data: Any):
-        if (
-            data.get("full_description") is None
-            and data.get("base_description") is not None
-        ):
-            data["full_description"] = data["base_description"]
         super().__init__(**data)
         if self.sub_race:
             assert (
@@ -146,10 +139,6 @@ class Config(BaseModel):
             assert (
                 self.main_class
             ), "If sub-class is provided the class must be provided first"
-            assert self.sub_class in subclasses[self.main_class], (
-                f"Sub-class must be in sub-classes "
-                f"{subclasses[self.main_class]}"
-            )
 
 
 def parse_arguments(config_class: Type[Config]):

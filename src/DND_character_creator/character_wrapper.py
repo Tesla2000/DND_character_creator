@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import random
+import sys
 from enum import Enum
 from functools import partial
 from itertools import chain
@@ -8,6 +10,7 @@ from itertools import filterfalse
 from itertools import islice
 from itertools import repeat
 from operator import attrgetter
+from typing import Any
 from typing import Callable
 from typing import Optional
 from typing import Sequence
@@ -155,6 +158,7 @@ class CharacterWrapper:
         )
         if Feat.TOUGH in self.feats:
             self._health += 2 * self.character.level
+        self._health += self.character.main_race == MainRace.DWARF
         return self._health
 
     @property
@@ -213,6 +217,16 @@ class CharacterWrapper:
                 if option.value not in skill_proficiencies
             },
         )
+
+        class PickSkillAtRandom(BaseModel):
+            def __init__(self, /, **data: Any):
+                for key, value in data.items():
+                    while value not in self.model_fields[key].annotation:
+                        data[key] = random.choice(
+                            tuple(self.model_fields[key].annotation)
+                        )
+                super().__init__(**data)
+
         skill_choice_model = create_model(
             "SkillChoice",
             **{
@@ -230,6 +244,7 @@ class CharacterWrapper:
                 for i in range(n_any_choice)
                 if len(other_options)
             },
+            __base__=PickSkillAtRandom,
         )
         skills_llm = self.llm.with_structured_output(skill_choice_model)
         picked_skills = attrgetter(
@@ -347,9 +362,7 @@ class CharacterWrapper:
                     + self.character.model_dump_json(indent=2)
                 )
             )
-        additional = (
-            additional if isinstance(additional, list) else [additional]
-        )
+        additional = always_iterable(additional)
         self._tool_proficiencies = list(obligatory.union(additional))
         return self._tool_proficiencies
 
@@ -628,7 +641,7 @@ class CharacterWrapper:
 
     @property
     def proficiency_bonus(self) -> int:
-        return self.character.level // 4 + 2
+        return (self.character.level - 1) // 4 + 2
 
     @property
     def feats(self) -> list[Feat]:
@@ -661,7 +674,9 @@ class CharacterWrapper:
     def equipment(self) -> list[Item]:
         if self._equipment:
             return self._equipment
-        character_gold = self.character.amount_of_gold_for_equipment
+        character_gold = (
+            self.character.amount_of_gold_for_equipment or sys.maxsize
+        )
         armor = next(
             armor for armor in armor_list if armor.name == self.character.armor
         )
@@ -910,6 +925,10 @@ class CharacterWrapper:
             bonus = min(2, modifier)
         else:
             bonus = modifier
+            if self.character.main_class == MainClass.MONK:
+                bonus += self.attributes[Statistic.WISDOM] // 2 - 5
+            elif self.character.main_class == MainClass.BARBARIAN:
+                bonus += self.attributes[Statistic.CONSTITUTION] // 2 - 5
         no_abilities = armor.base_ac + bonus
         if self.character.main_race == MainRace.LIZARDFOLK:
             no_abilities = max(no_abilities, 13 + modifier)

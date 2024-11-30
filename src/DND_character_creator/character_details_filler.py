@@ -40,7 +40,7 @@ class CharacterDetailsFiller:
         character_full_template, self.full_pre_defined_fields = (
             get_full_character_template(self.config, self.character_base)
         )
-        description_full = self.config.full_description.strip()
+        description_full = self.config.base_description.strip()
         pre_defined = json.dumps(
             dict(
                 **ChainMap(

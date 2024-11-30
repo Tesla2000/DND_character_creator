@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from typing import Any
 from typing import Optional
 from typing import Type
@@ -144,6 +145,10 @@ class Fixing(BaseModel):
                     data[level_name].remove(spell)
         in_weapons = tuple(WeaponName.__members__.values()).__contains__
         data["weapons"] = list(filter(in_weapons, data["weapons"]))
+        if data["sub_class"] not in self.model_fields["sub_class"].annotation:
+            data["sub_class"] = random.choice(
+                tuple(self.model_fields["sub_class"].annotation)
+            )
         super().__init__(**data)
 
 

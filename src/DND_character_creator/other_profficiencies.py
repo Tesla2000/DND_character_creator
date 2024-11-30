@@ -18,7 +18,7 @@ class ToolProficiency(str, Enum):
     PAINTERS_SUPPLIES = "Painter's supplies"
     POTTERS_TOOLS = "Potter's tools"
     SMITHS_TOOLS = "Smith's tools"
-    TINKERS_TOOLS = "Tinker's tools"
+    TINKERS_TOOLS = "Tinkerer's tools"
     WEAVERS_TOOLS = "Weaver's tools"
     WOODCARVERS_TOOLS = "Woodcarver's tools"
     DISGUISE_KIT = "Disguise kit"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from typing import Optional
 from typing import Type
 
 from pydantic import BaseModel
@@ -49,6 +50,7 @@ class CharacterBase(BaseModel):
     bonds: str
     weaknesses: str
     amount_of_gold_for_equipment: int
+    base_description: Optional[str] = None
 
 
 def get_base_character_template(
@@ -80,7 +82,8 @@ def get_base_character_template(
         ideals=(str, ...),
         bonds=(str, ...),
         weaknesses=(str, ...),
-        amount_of_gold_for_equipment=(int, ...),
+        amount_of_gold_for_equipment=(Optional[int], Field(None)),
+        base_description=(str, ...),
     )
     pre_set_values = {}
     for key in tuple(fields_dictionary.keys()):
