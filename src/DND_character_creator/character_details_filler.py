@@ -65,5 +65,5 @@ class CharacterDetailsFiller:
             **self.character_full_template.model_dump(),
             **self.character_base.model_dump(),
         )
-
+        print(character_full.model_dump_json(indent=2))
         return CharacterWrapper(character_full, self.config, self.llm)

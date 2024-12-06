@@ -3,14 +3,19 @@ from __future__ import annotations
 from enum import Enum
 
 
-class ArtificerSubclass(str, Enum):
+class _Subclass(str, Enum):
+    def __str__(self):
+        return self.value
+
+
+class ArtificerSubclass(_Subclass):
     ALCHEMIST = "Alchemist"
     ARMORER = "Armorer"
     ARTILLERIST = "Artillerist"
     BATTLE_SMITH = "Battle Smith"
 
 
-class BarbarianSubclass(str, Enum):
+class BarbarianSubclass(_Subclass):
     ANCESTRAL_GUARDIAN = "Path of the Ancestral Guardian"
     BATTLERAGER = "Path of the Battlerager"
     BEAST = "Path of the Beast"
@@ -22,7 +27,7 @@ class BarbarianSubclass(str, Enum):
     ZEALOT = "Path of the Zealot"
 
 
-class BardSubclass(str, Enum):
+class BardSubclass(_Subclass):
     CREATION = "College of Creation"
     ELOQUENCE = "College of Eloquence"
     GLAMOUR = "College of Glamour"
@@ -33,7 +38,7 @@ class BardSubclass(str, Enum):
     WHISPERS = "College of Whispers"
 
 
-class ClericSubclass(str, Enum):
+class ClericSubclass(_Subclass):
     ARCANA = "Arcana Domain"
     DEATH = "Death Domain"
     FORGE = "Forge Domain"
@@ -50,7 +55,7 @@ class ClericSubclass(str, Enum):
     WAR = "War Domain"
 
 
-class DruidSubclass(str, Enum):
+class DruidSubclass(_Subclass):
     DREAMS = "Circle of Dreams"
     LAND = "Circle of the Land"
     MOON = "Circle of the Moon"
@@ -60,7 +65,7 @@ class DruidSubclass(str, Enum):
     WILDFIRE = "Circle of Wildfire"
 
 
-class FighterSubclass(str, Enum):
+class FighterSubclass(_Subclass):
     ARCANE_ARCHER = "Arcane Archer"
     BANNERET = "Banneret"
     BATTLE_MASTER = "Battle Master"
@@ -73,7 +78,7 @@ class FighterSubclass(str, Enum):
     SAMURAI = "Samurai"
 
 
-class MonkSubclass(str, Enum):
+class MonkSubclass(_Subclass):
     MERCY = "Way of Mercy"
     ASCENDANT_DRAGON = "Way of the Ascendant Dragon"
     ASTRAL_SELF = "Way of the Astral Self"
@@ -86,7 +91,7 @@ class MonkSubclass(str, Enum):
     SUN_SOUL = "Way of the Sun Soul"
 
 
-class PaladinSubclass(str, Enum):
+class PaladinSubclass(_Subclass):
     ANCIENTS = "Oath of the Ancients"
     CONQUEST = "Oath of Conquest"
     CROWN = "Oath of the Crown"
@@ -98,7 +103,7 @@ class PaladinSubclass(str, Enum):
     OATHBREAKER = "Oathbreaker"
 
 
-class RangerSubclass(str, Enum):
+class RangerSubclass(_Subclass):
     BEAST_MASTER = "Beast Master Conclave"
     DRAKEWARDEN = "Drakewarden"
     FEY_WANDERER = "Fey Wanderer"
@@ -109,7 +114,7 @@ class RangerSubclass(str, Enum):
     SWARMKEEPER = "Swarmkeeper"
 
 
-class RogueSubclass(str, Enum):
+class RogueSubclass(_Subclass):
     ARCANE_TRICKSTER = "Arcane Trickster"
     ASSASSIN = "Assassin"
     INQUISITIVE = "Inquisitive"
@@ -121,7 +126,7 @@ class RogueSubclass(str, Enum):
     THIEF = "Thief"
 
 
-class SorcererSubclass(str, Enum):
+class SorcererSubclass(_Subclass):
     ABERRANT_MIND = "Aberrant Mind"
     CLOCKWORK_SOUL = "Clockwork Soul"
     DRACONIC_BLOODLINE = "Draconic Bloodline"
@@ -132,7 +137,7 @@ class SorcererSubclass(str, Enum):
     WILD_MAGIC = "Wild Magic"
 
 
-class WarlockSubclass(str, Enum):
+class WarlockSubclass(_Subclass):
     ARCHFEY = "Archfey"
     CELESTIAL = "Celestial"
     FATHOMLESS = "Fathomless"
@@ -144,7 +149,7 @@ class WarlockSubclass(str, Enum):
     UNDYING = "Undying"
 
 
-class WizardSubclass(str, Enum):
+class WizardSubclass(_Subclass):
     ABJURATION = "School of Abjuration"
     BLADESINGING = "School of Bladesinging"
     CHRONURGY = "School of Chronurgy"
@@ -160,7 +165,7 @@ class WizardSubclass(str, Enum):
     WAR_MAGIC = "School of War Magic"
 
 
-class MainClass(str, Enum):
+class MainClass(_Subclass):
     BARBARIAN = "Barbarian"
     BARD = "Bard"
     CLERIC = "Cleric"

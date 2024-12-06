@@ -131,32 +131,62 @@ def update_prototype(
     prototype = prototype.replace(
         "SetStrengthProficiency{0",
         "SetStrengthProficiency{"
-        + str(int(Statistic.STRENGTH in character_wrapper.saving_throws)),
+        + str(
+            int(
+                Statistic.STRENGTH
+                in character_wrapper.saving_throw_proficiencies
+            )
+        ),
     )
     prototype = prototype.replace(
         "SetDexterityProficiency{0",
         "SetDexterityProficiency{"
-        + str(int(Statistic.DEXTERITY in character_wrapper.saving_throws)),
+        + str(
+            int(
+                Statistic.DEXTERITY
+                in character_wrapper.saving_throw_proficiencies
+            )
+        ),
     )
     prototype = prototype.replace(
         "SetConstitutionProficiency{1",
         "SetConstitutionProficiency{"
-        + str(int(Statistic.CONSTITUTION in character_wrapper.saving_throws)),
+        + str(
+            int(
+                Statistic.CONSTITUTION
+                in character_wrapper.saving_throw_proficiencies
+            )
+        ),
     )
     prototype = prototype.replace(
         "SetIntelligenceProficiency{0",
         "SetIntelligenceProficiency{"
-        + str(int(Statistic.INTELLIGENCE in character_wrapper.saving_throws)),
+        + str(
+            int(
+                Statistic.INTELLIGENCE
+                in character_wrapper.saving_throw_proficiencies
+            )
+        ),
     )
     prototype = prototype.replace(
         "SetWisdomProficiency{0",
         "SetWisdomProficiency{"
-        + str(int(Statistic.WISDOM in character_wrapper.saving_throws)),
+        + str(
+            int(
+                Statistic.WISDOM
+                in character_wrapper.saving_throw_proficiencies
+            )
+        ),
     )
     prototype = prototype.replace(
         "SetCharismaProficiency{1",
         "SetCharismaProficiency{"
-        + str(int(Statistic.CHARISMA in character_wrapper.saving_throws)),
+        + str(
+            int(
+                Statistic.CHARISMA
+                in character_wrapper.saving_throw_proficiencies
+            )
+        ),
     )
 
     prototype = prototype.replace(

@@ -16,6 +16,7 @@ from pydantic import PositiveInt
 from .choices.alignment import Alignment
 from .choices.background_creatrion.background import Background
 from .choices.class_creation.character_class import MainClass
+from .choices.class_creation.character_class import WizardSubclass
 from .choices.equipment_creation.armor import ArmorName
 from .choices.equipment_creation.weapons import WeaponName
 from .choices.health_creation.health_creation_method import (
@@ -64,9 +65,9 @@ class Config(BaseModel):
 
     pos_args: list[str] = Field(default_factory=list)
     n_instances: int = 1
-    level: Optional[PositiveInt] = None
-    main_class: Optional[MainClass] = None
-    base_description: str = None
+    level: Optional[PositiveInt] = 8
+    main_class: Optional[MainClass] = MainClass.WIZARD
+    base_description: str = "battlefield control war mage"
     stats_creation_method: StatsCreationMethod = (
         StatsCreationMethod.STANDARD_ARRAY
     )
@@ -76,7 +77,7 @@ class Config(BaseModel):
     height_prompt: str = "Height in centimeters"
     weight_prompt: str = "Weight in kilograms"
     sex: Optional[Sex] = None
-    backstory: Optional[str] = None
+    backstory: Optional[str] = ""
     age: Optional[PositiveInt] = None
     first_most_important_stat: Optional[Statistic] = None
     second_most_important_stat: Optional[Statistic] = None
@@ -84,7 +85,7 @@ class Config(BaseModel):
     forth_most_important_stat: Optional[Statistic] = None
     fifth_most_important_stat: Optional[Statistic] = None
     sixth_most_important_stat: Optional[Statistic] = None
-    main_race: Optional[MainRace] = None
+    main_race: Optional[MainRace] = MainRace.HUMAN
     name: Optional[str] = None
     background: Optional[Background] = None
     alignment: Optional[Alignment] = None
@@ -112,8 +113,8 @@ class Config(BaseModel):
     eighth_level_spells: Optional[list[EighthLevel]] = None
     ninth_level_spells: Optional[list[NinthLevel]] = None
     feats: Optional[list[Feat]] = None
-    sub_race: Optional[str] = None
-    sub_class: Optional[str] = None
+    sub_race: Optional[str] = "Variant Human"
+    sub_class: Optional[str] = WizardSubclass.WAR_MAGIC
     character_traits: Optional[str] = None
     ideals: Optional[str] = None
     bonds: Optional[str] = None

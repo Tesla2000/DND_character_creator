@@ -222,9 +222,10 @@ class CharacterWrapper:
             def __init__(self, /, **data: Any):
                 for key, value in data.items():
                     while value not in self.model_fields[key].annotation:
-                        data[key] = random.choice(
+                        value = random.choice(
                             tuple(self.model_fields[key].annotation)
                         )
+                        data[key] = value
                 super().__init__(**data)
 
         skill_choice_model = create_model(
@@ -607,6 +608,29 @@ class CharacterWrapper:
         for feat in self.feats:
             if feat == Feat.ABILITY_SCORE_IMPROVEMENT:
                 self._improve_from_ability_score(attributes_in_order)
+            elif feat == Feat.RESILIENT:
+                _ = self.saving_throw_proficiencies
+                important_saves = (
+                    Statistic.DEXTERITY,
+                    Statistic.CONSTITUTION,
+                    Statistic.WISDOM,
+                )
+                important_saves = tuple(
+                    filterfalse(
+                        self._saving_throws.__contains__, important_saves
+                    )
+                )
+                attributes_in_order = tuple(
+                    filter(
+                        important_saves.__contains__,
+                        self._reduce_attributes_in_order(attributes_in_order),
+                    )
+                )
+                if attributes_in_order:
+                    self._attributes[attributes_in_order[0]] += 1
+                    self._saving_throws.append(attributes_in_order[0])
+                else:
+                    raise ValueError
             elif (
                 self._feat2feat_template(feat).attribute_increase
                 == StatisticAndAny.ANY_OF_YOUR_CHOICE
@@ -616,6 +640,8 @@ class CharacterWrapper:
                 )
                 if attributes_in_order:
                     self._attributes[attributes_in_order[0]] += 1
+                else:
+                    raise ValueError
             elif self._feat2feat_template(feat).attribute_increase:
                 self._attributes[
                     self._feat2feat_template(feat).attribute_increase
@@ -635,7 +661,8 @@ class CharacterWrapper:
     @property
     def saving_throw_modifiers(self) -> dict[Statistic, int]:
         return {
-            key: value + self.proficiency_bonus * (key in self.saving_throws)
+            key: value
+            + self.proficiency_bonus * (key in self.saving_throw_proficiencies)
             for key, value in self.modifiers.items()
         }
 
@@ -748,7 +775,7 @@ class CharacterWrapper:
         ]
 
     @property
-    def saving_throws(self) -> list[Statistic]:
+    def saving_throw_proficiencies(self) -> list[Statistic]:
         if self._saving_throws:
             return self._saving_throws
         self._saving_throws = list(

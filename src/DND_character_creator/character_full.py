@@ -84,7 +84,11 @@ class CharacterFull(CharacterBase):
     seventh_level_spells: list[SeventhLevel] = Field(default_factory=list)
     eighth_level_spells: list[EighthLevel] = Field(default_factory=list)
     ninth_level_spells: list[NinthLevel] = Field(default_factory=list)
-    feats: list[Feat]
+    feats: list[Feat] = Field(
+        description="Feats from a list fitting description of the character if"
+        " race is variant human at least one must be different "
+        "than ability score improvement"
+    )
     sub_race: str
     sub_class: str
     warlock_pact: Optional[WarlockPact]
@@ -145,10 +149,16 @@ class Fixing(BaseModel):
                     data[level_name].remove(spell)
         in_weapons = tuple(WeaponName.__members__.values()).__contains__
         data["weapons"] = list(filter(in_weapons, data["weapons"]))
-        if data["sub_class"] not in self.model_fields["sub_class"].annotation:
+        if (
+            "sub_class" in data
+            and data["sub_class"]
+            not in self.model_fields["sub_class"].annotation
+        ):
             data["sub_class"] = random.choice(
                 tuple(self.model_fields["sub_class"].annotation)
             )
+        if data["armor"] == "Robes":
+            data["armor"] = "Clothes"
         super().__init__(**data)
 
 
